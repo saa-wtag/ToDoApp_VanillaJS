@@ -42,7 +42,8 @@ const editHandler = (taskId, currentTitleElement, editButton) => {
 
     const taskIndex = tasks.findIndex((task) => task.id === taskId);
     const currentTask = tasks[taskIndex];
-
+    const newId = new Date().getTime();
+    console.log(taskId);
     editButton.style.display = "none";
 
     const inputField = document.createElement("input");
@@ -53,7 +54,7 @@ const editHandler = (taskId, currentTitleElement, editButton) => {
     const updateButton = document.createElement("button");
     updateButton.innerText = "Update";
     updateButton.addEventListener("click", () => {
-        updateTask(inputField.value.trim()+" ", taskIndex, editButton);
+        updateTask(inputField.value.trim()+" ", taskIndex, newId, editButton);
     });
 
     const cancelButton = document.createElement("button");
@@ -68,9 +69,11 @@ const editHandler = (taskId, currentTitleElement, editButton) => {
     currentTitleElement.appendChild(cancelButton);
 };
 
-const updateTask = (newTitle, taskIndex, editButton) => {
+const updateTask = (newTitle, taskIndex,newId, editButton) => {
     if (newTitle) {
         tasks[taskIndex].title = newTitle;
+        tasks[taskIndex].id = newId;
+        console.log(tasks[taskIndex].id);
         currentTaskId = null;
         renderTasks();
     } else {
