@@ -12,6 +12,7 @@ const addTaskHandler = ()=>{
         tasksList.textContent = taskTitle;
         unoderedList.prepend(tasksList);
         taskInput.value = "";
+        showMessage("Task added successfully!")
     }
     else
         showMessage("Please provide valid Task.");
