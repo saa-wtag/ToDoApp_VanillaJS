@@ -1,6 +1,7 @@
 const taskInput = document.getElementById("task-input");
 const addButton = document.getElementById("btn-add");
 const unoderedList = document.getElementById("tasks");
+const notification = document.getElementById("message");
 
 let tasks = [];
 const addTaskHandler = ()=>{
@@ -13,8 +14,15 @@ const addTaskHandler = ()=>{
         taskInput.value = "";
     }
     else
-        alert("Please provide valid Task.");
+        showMessage("Please provide valid Task.");
 };
 
+const showMessage = (message) => {
+    notification.textContent = message;
+    notification.hidden=false;
+    setTimeout(() => {
+        notification.hidden=true;
+    }, 1000);
+};
 
 addButton.addEventListener("click",addTaskHandler);
