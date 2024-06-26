@@ -4,7 +4,8 @@ const unorderedTaskList = document.getElementById("tasks");
 const toaster = document.getElementById("message");
 
 let tasks = [];
-const addTaskHandler = () => {
+
+addButton.onclick = () => {
   const taskTitle = taskInput.value.trim();
   if (taskTitle) {
     tasks.unshift(taskTitle);
@@ -24,8 +25,6 @@ const showMessage = (message) => {
     toaster.hidden = true;
   }, 1000);
 };
-
-addButton.addEventListener("click", addTaskHandler);
 
 taskInput.addEventListener("input", () => {
   if (taskInput.value.trim()) {
