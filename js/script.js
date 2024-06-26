@@ -13,9 +13,8 @@ const addTaskHandler = ()=>{
         unoderedList.prepend(tasksList);
         taskInput.value = "";
         showMessage("Task added successfully!")
-    }
-    else
-        showMessage("Please provide valid Task.");
+        addButton.disabled=true;
+    }   
 };
 
 const showMessage = (message) => {
@@ -27,3 +26,11 @@ const showMessage = (message) => {
 };
 
 addButton.addEventListener("click",addTaskHandler);
+
+taskInput.addEventListener("input", () => {
+    if (taskInput.value.trim()) {
+        addButton.disabled = false;
+    } else {
+        addButton.disabled = true;
+    }
+});
