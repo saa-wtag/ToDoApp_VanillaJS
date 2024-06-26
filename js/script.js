@@ -1,7 +1,7 @@
 const taskInput = document.getElementById("task-input");
-const addButton = document.getElementById("btn-add");
-const unoderedList = document.getElementById("tasks");
-const notification = document.getElementById("message");
+const addButton = document.getElementById("add-button");
+const unorderedTaskList = document.getElementById("tasks");
+const toaster = document.getElementById("message");
 
 let tasks = [];
 const addTaskHandler = () => {
@@ -10,7 +10,7 @@ const addTaskHandler = () => {
     tasks.unshift(taskTitle);
     const tasksList = document.createElement("li");
     tasksList.textContent = taskTitle;
-    unoderedList.prepend(tasksList);
+    unorderedTaskList.prepend(tasksList);
     taskInput.value = "";
     showMessage("Task added successfully!");
     addButton.disabled = true;
@@ -18,10 +18,10 @@ const addTaskHandler = () => {
 };
 
 const showMessage = (message) => {
-  notification.textContent = message;
-  notification.hidden = false;
+  toaster.textContent = message;
+  toaster.hidden = false;
   setTimeout(() => {
-    notification.hidden = true;
+    toaster.hidden = true;
   }, 1000);
 };
 
