@@ -13,12 +13,12 @@ addButton.onclick = () => {
     tasksList.textContent = taskTitle;
     unorderedTaskList.prepend(tasksList);
     taskInput.value = "";
-    showMessage("Task added successfully!");
+    showToastMessage("Task added successfully!");
     addButton.disabled = true;
   }
 };
 
-const showMessage = (message) => {
+const showToastMessage = (message) => {
   toaster.textContent = message;
   toaster.hidden = false;
   setTimeout(() => {
