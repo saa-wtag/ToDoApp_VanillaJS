@@ -4,33 +4,33 @@ const unoderedList = document.getElementById("tasks");
 const notification = document.getElementById("message");
 
 let tasks = [];
-const addTaskHandler = ()=>{
-    const taskTitle = taskInput.value.trim();
-    if(taskTitle){
-        tasks.unshift(taskTitle);
-        const tasksList = document.createElement("li");
-        tasksList.textContent = taskTitle;
-        unoderedList.prepend(tasksList);
-        taskInput.value = "";
-        showMessage("Task added successfully!")
-        addButton.disabled=true;
-    }   
+const addTaskHandler = () => {
+  const taskTitle = taskInput.value.trim();
+  if (taskTitle) {
+    tasks.unshift(taskTitle);
+    const tasksList = document.createElement("li");
+    tasksList.textContent = taskTitle;
+    unoderedList.prepend(tasksList);
+    taskInput.value = "";
+    showMessage("Task added successfully!");
+    addButton.disabled = true;
+  }
 };
 
 const showMessage = (message) => {
-    notification.textContent = message;
-    notification.hidden=false;
-    setTimeout(() => {
-        notification.hidden=true;
-    }, 1000);
+  notification.textContent = message;
+  notification.hidden = false;
+  setTimeout(() => {
+    notification.hidden = true;
+  }, 1000);
 };
 
-addButton.addEventListener("click",addTaskHandler);
+addButton.addEventListener("click", addTaskHandler);
 
 taskInput.addEventListener("input", () => {
-    if (taskInput.value.trim()) {
-        addButton.disabled = false;
-    } else {
-        addButton.disabled = true;
-    }
+  if (taskInput.value.trim()) {
+    addButton.disabled = false;
+  } else {
+    addButton.disabled = true;
+  }
 });
