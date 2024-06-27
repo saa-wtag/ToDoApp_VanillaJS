@@ -1,4 +1,4 @@
-import {$taskInput, $addButton, $taskList, $toaster } from "./element.js";
+import {$taskInput, $addButton, $taskList, $toaster } from "./elements.js";
 
 let tasks = [];
 
