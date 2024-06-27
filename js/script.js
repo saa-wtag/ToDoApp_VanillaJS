@@ -4,6 +4,7 @@ const unorderedTaskList = document.getElementById("tasks");
 const toaster = document.getElementById("message");
 
 let tasks = [];
+
 addButton.onclick = () => {
   const taskTitle = taskInput.value.trim();
   if (taskTitle) {
@@ -30,7 +31,7 @@ const deleteHandler = (taskId) => {
 };
 
 const renderTasks = () => {
-  unoderedList.innerHTML = "";
+  unorderedTaskList.innerHTML = "";
 
   tasks.forEach((task) => {
     const tasksList = document.createElement("li");
@@ -41,7 +42,7 @@ const renderTasks = () => {
     deleteButton.addEventListener("click", () => deleteHandler(task.id));
 
     tasksList.appendChild(deleteButton);
-    unoderedList.appendChild(tasksList);
+    unorderedTaskList.appendChild(tasksList);
   });
 };
 
