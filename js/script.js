@@ -1,13 +1,16 @@
 const taskInput = document.getElementById("task-input");
-const addButton = document.getElementById("btn-add");
-const unoderedList = document.getElementById("tasks");
+const addButton = document.getElementById("add-button");
+const unorderedTaskList = document.getElementById("tasks");
+const toaster = document.getElementById("message");
 
 let tasks = [];
-const addTaskHandler = () => {
-  const taskTitle = taskInput.value.trim() + " ";
+addButton.onclick = () => {
+  const taskTitle = taskInput.value.trim();
   if (taskTitle) {
     createTask(taskTitle);
-  } else alert("Please provide valid Task.");
+    showToastMessage("Task added successfully!");
+    addButton.disabled = true;
+  }
 };
 
 const createTask = (taskTitle) => {
@@ -42,4 +45,18 @@ const renderTasks = () => {
   });
 };
 
-addButton.addEventListener("click", addTaskHandler);
+const showToastMessage = (message) => {
+  toaster.textContent = message;
+  toaster.hidden = false;
+  setTimeout(() => {
+    toaster.hidden = true;
+  }, 3000);
+};
+
+taskInput.addEventListener("input", () => {
+  if (taskInput.value.trim()) {
+    addButton.disabled = false;
+  } else {
+    addButton.disabled = true;
+  }
+});
