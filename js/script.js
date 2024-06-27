@@ -6,9 +6,9 @@ const addButtonHandler = () => {
   const taskTitle = $taskInput.value.trim();
   if (taskTitle) {
     tasks.unshift(taskTitle);
-    const tasksList = document.createElement("li");
-    tasksList.textContent = taskTitle;
-    $taskList.prepend(tasksList);
+    const $tasksList = document.createElement("li");
+    $tasksList.textContent = taskTitle;
+    $taskList.prepend($tasksList);
     $taskInput.value = "";
     showToastMessage("Task added successfully!");
     $addButton.disabled = true;
