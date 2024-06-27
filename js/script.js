@@ -23,7 +23,7 @@ const showToastMessage = (message) => {
   toaster.hidden = false;
   setTimeout(() => {
     toaster.hidden = true;
-  }, 1000);
+  }, 3000);
 };
 
 taskInput.addEventListener("input", () => {
