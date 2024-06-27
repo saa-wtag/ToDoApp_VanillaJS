@@ -52,7 +52,7 @@ const editHandler = (taskId, currentTitleElement, editButton) => {
   const $updateButton = document.createElement("button");
   $updateButton.innerText = "Update";
   $updateButton.addEventListener("click", () => {
-    updateTask(inputField.value.trim() + " ", taskIndex, newId, editButton);
+    updateTask($inputField.value.trim() + " ", taskIndex, newId, editButton);
   });
 
   const $cancelButton = document.createElement("button");
