@@ -31,15 +31,15 @@ const renderTasks = () => {
   $taskList.innerHTML = "";
 
   tasks.forEach((task) => {
-    const $tasksList = document.createElement("li");
-    $tasksList.textContent = task.title;
+    const tasksList = document.createElement("li");
+    tasksList.textContent = task.title;
 
-    const $deleteButton = document.createElement("button");
-    $deleteButton.innerText = "Delete";
-    $deleteButton.addEventListener("click", () => deleteHandler(task.id));
+    const deleteButton = document.createElement("button");
+    deleteButton.innerText = "Delete";
+    deleteButton.addEventListener("click", () => deleteHandler(task.id));
 
-    $tasksList.appendChild($deleteButton);
-    $taskList.appendChild($tasksList);
+    tasksList.appendChild(deleteButton);
+    $taskList.appendChild(tasksList);
   });
 };
 
