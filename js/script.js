@@ -1,16 +1,13 @@
-const taskInput = document.getElementById("task-input");
-const addButton = document.getElementById("add-button");
-const unorderedTaskList = document.getElementById("tasks");
-const toaster = document.getElementById("message");
+import {$taskInput, $addButton, $taskList, $toaster } from "./elements.js";
 
 let tasks = [];
 
-addButton.onclick = () => {
-  const taskTitle = taskInput.value.trim();
+const addButtonHandler = () => {
+  const taskTitle = $taskInput.value.trim();
   if (taskTitle) {
     createTask(taskTitle);
     showToastMessage("Task added successfully!");
-    addButton.disabled = true;
+    $addButton.disabled = true;
   }
 };
 
@@ -47,17 +44,19 @@ const renderTasks = () => {
 };
 
 const showToastMessage = (message) => {
-  toaster.textContent = message;
-  toaster.hidden = false;
+  $toaster.textContent = message;
+  $toaster.hidden = false;
   setTimeout(() => {
-    toaster.hidden = true;
+    $toaster.hidden = true;
   }, 3000);
 };
 
-taskInput.addEventListener("input", () => {
-  if (taskInput.value.trim()) {
-    addButton.disabled = false;
+$taskInput.addEventListener("input", () => {
+  if ($taskInput.value.trim()) {
+    $addButton.disabled = false;
   } else {
-    addButton.disabled = true;
+    $addButton.disabled = true;
   }
 });
+
+$addButton.addEventListener("click", addButtonHandler);
