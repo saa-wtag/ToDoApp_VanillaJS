@@ -19,7 +19,7 @@ const createTask = (taskTitle) => {
   tasks.unshift(task);
   renderTasks();
 
-  taskInput.value = "";
+  $taskInput.value = "";
 };
 
 const deleteHandler = (taskId) => {
@@ -28,7 +28,7 @@ const deleteHandler = (taskId) => {
 };
 
 const renderTasks = () => {
-  unorderedTaskList.innerHTML = "";
+  $taskList.innerHTML = "";
 
   tasks.forEach((task) => {
     const tasksList = document.createElement("li");
@@ -39,7 +39,7 @@ const renderTasks = () => {
     deleteButton.addEventListener("click", () => deleteHandler(task.id));
 
     tasksList.appendChild(deleteButton);
-    unorderedTaskList.appendChild(tasksList);
+    $taskList.appendChild(tasksList);
   });
 };
 
