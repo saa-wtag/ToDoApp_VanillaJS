@@ -6,11 +6,14 @@
     <title>ToDoApp</title>
   </head>
   <body>
-    <h1>ToDoApp</h1>
-    <h3>Add Tasks</h3>
+    <header>
+      <h1>ToDoApp</h1>
+    </header>
+    <h5 id="message" hidden></h5>
+    <p>Add Tasks</p>
     <input type="text" id="task-input" placeholder="Write your task" />
-    <button id="btn-add">Add Task</button>
-    <div class="container">
+    <button id="add-button" disabled>Add Task</button>
+    <div class="tasks-container">
       <ul id="tasks"></ul>
     </div>
 

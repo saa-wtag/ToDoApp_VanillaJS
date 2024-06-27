@@ -1,28 +1,27 @@
-const taskInput = document.getElementById("task-input");
-const addButton = document.getElementById("btn-add");
-const unoderedList = document.getElementById("tasks");
+import {$taskInput, $addButton, $taskList, $toaster } from "./elements.js";
 
 let tasks = [];
 let currentTaskId = null;
 
-const addTaskHandler = () => {
-  const taskTitle = taskInput.value.trim();
+const addButtonHandler = () => {
+  const taskTitle = $taskInput.value.trim();
   if (taskTitle) {
-    createTask(taskTitle + " ");
-  } else {
-    alert("Please provide valid Task.");
+    createTask(taskTitle);
+    showToastMessage("Task added successfully!");
+    $addButton.disabled = true;
   }
 };
 
-const createTask = (taskTitle) => {
-  const task = {
-    id: new Date().getTime(),
-    title: taskTitle,
-  };
-  tasks.unshift(task);
-  renderTasks();
 
-  taskInput.value = "";
+const createTask = (taskTitle)=>{
+    const task = {
+        id: new Date().getTime(),
+        title: taskTitle
+    };
+    tasks.unshift(task);
+    renderTasks();
+
+  $taskInput.value = "";
 };
 
 const deleteHandler = (taskId) => {
@@ -45,27 +44,27 @@ const editHandler = (taskId, currentTitleElement, editButton) => {
   const newId = new Date().getTime();
   editButton.style.display = "none";
 
-  const inputField = document.createElement("input");
-  inputField.type = "text";
-  inputField.value = currentTask.title.trim();
-  inputField.classList.add("edit-input");
+  const $inputField = document.createElement("input");
+  $inputField.type = "text";
+  $inputField.value = currentTask.title.trim();
+  $inputField.classList.add("edit-input");
 
-  const updateButton = document.createElement("button");
-  updateButton.innerText = "Update";
-  updateButton.addEventListener("click", () => {
+  const $updateButton = document.createElement("button");
+  $updateButton.innerText = "Update";
+  $updateButton.addEventListener("click", () => {
     updateTask(inputField.value.trim() + " ", taskIndex, newId, editButton);
   });
 
-  const cancelButton = document.createElement("button");
-  cancelButton.innerText = "Cancel";
-  cancelButton.addEventListener("click", () => {
+  const $cancelButton = document.createElement("button");
+  $cancelButton.innerText = "Cancel";
+  $cancelButton.addEventListener("click", () => {
     cancelEdit();
   });
 
   currentTitleElement.textContent = "";
-  currentTitleElement.appendChild(inputField);
-  currentTitleElement.appendChild(updateButton);
-  currentTitleElement.appendChild(cancelButton);
+  currentTitleElement.appendChild($inputField);
+  currentTitleElement.appendChild($updateButton);
+  currentTitleElement.appendChild($cancelButton);
 };
 
 const updateTask = (newTitle, taskIndex, newId, editButton) => {
@@ -87,28 +86,45 @@ const cancelEdit = () => {
 };
 
 const renderTasks = () => {
-  unoderedList.innerHTML = "";
+  $taskList.innerHTML = "";
 
   tasks.forEach((task) => {
-    const tasksList = document.createElement("li");
-    const titleElement = document.createElement("span");
-    titleElement.textContent = task.title;
+    const $tasksList = document.createElement("li");
+    const $titleElement = document.createElement("span");
+    $titleElement.textContent = task.title;
 
-    const deleteButton = document.createElement("button");
-    deleteButton.innerText = "Delete";
-    deleteButton.addEventListener("click", () => deleteHandler(task.id));
+    const $deleteButton = document.createElement("button");
+    $deleteButton.innerText = "Delete";
+    $deleteButton.addEventListener("click", () => deleteHandler(task.id));
 
-    const editButton = document.createElement("button");
-    editButton.innerText = "Edit";
-    editButton.addEventListener("click", () =>
-      editHandler(task.id, titleElement, editButton)
+    const $editButton = document.createElement("button");
+    $editButton.innerText = "Edit";
+    $editButton.addEventListener("click", () =>
+      editHandler(task.id, $titleElement, $editButton)
     );
 
-    tasksList.appendChild(titleElement);
-    tasksList.appendChild(editButton);
-    tasksList.appendChild(deleteButton);
-    unoderedList.appendChild(tasksList);
+    $tasksList.appendChild($titleElement);
+    $tasksList.appendChild($editButton);
+    $tasksList.appendChild($deleteButton);
+
+    $taskList.appendChild($tasksList);
   });
 };
 
-addButton.addEventListener("click", addTaskHandler);
+const showToastMessage = (message) => {
+  $toaster.textContent = message;
+  $toaster.hidden = false;
+  setTimeout(() => {
+    $toaster.hidden = true;
+  }, 3000);
+};
+
+$taskInput.addEventListener("input", () => {
+  if ($taskInput.value.trim()) {
+    $addButton.disabled = false;
+  } else {
+    $addButton.disabled = true;
+  }
+});
+
+$addButton.addEventListener("click", addButtonHandler);
