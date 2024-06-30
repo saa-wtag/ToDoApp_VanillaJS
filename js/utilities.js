@@ -14,3 +14,10 @@ export const handleInputChange = ($inputField, $updateButton, currentTask) => {
       trimmedValue.length > 0 && trimmedValue !== currentTask.title
     );
   };
+
+  export const createButton = (text, onClick) => {
+    const $button = document.createElement("button");
+    $button.innerText = text;
+    $button.addEventListener("click", onClick);
+    return $button;
+  };
