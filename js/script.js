@@ -1,4 +1,5 @@
-import { $taskInput, $addButton, $taskList, $toaster } from "./elements.js";
+import { $taskInput, $addButton, $taskList } from "./elements.js";
+import { showToastMessage, handleInputChange } from "./utilities.js";
 
 let tasks = [];
 let currentTaskId = null;
@@ -30,7 +31,7 @@ const editHandler = (taskId, currentTitleElement, editButton) => {
   const taskIndex = tasks.findIndex((task) => task.id === taskId);
   const currentTask = tasks[taskIndex];
   const newId = new Date().getTime();
-  editButton.style.display = "none";
+  editButton.hidden = true;
 
   const $inputField = document.createElement("input");
   $inputField.type = "text";
@@ -46,14 +47,9 @@ const editHandler = (taskId, currentTitleElement, editButton) => {
     cancelEdit();
   });
 
-  const handleInputChange = () => {
-    const trimmedValue = $inputField.value.trim();
-    $updateButton.disabled = !(
-      trimmedValue.length > 0 && trimmedValue !== currentTask.title
-    );
-  };
-
-  $inputField.addEventListener("input", handleInputChange);
+  $inputField.addEventListener("input", () => {
+    handleInputChange($inputField, $updateButton, currentTask);
+  });
 
   $updateButton.addEventListener("click", () => {
     updateTask($inputField.value.trim(), taskIndex, newId, editButton);
@@ -88,11 +84,13 @@ const createTask = (taskTitle) => {
 const updateTask = (newTitle, taskIndex, newId, editButton) => {
   if (newTitle.trim().length > 0) {
     tasks[taskIndex].title = newTitle.trim();
+  if (newTitle.trim().length > 0) {
+    tasks[taskIndex].title = newTitle.trim();
     tasks[taskIndex].id = newId;
     currentTaskId = null;
     renderTasks();
   }
-  editButton.style.display = "block";
+  editButton.hidden = "true";
 };
 
 const cancelEdit = () => {
@@ -134,14 +132,6 @@ const renderTasks = () => {
 
     $taskList.appendChild($tasksList);
   });
-};
-
-const showToastMessage = (message) => {
-  $toaster.textContent = message;
-  $toaster.hidden = false;
-  setTimeout(() => {
-    $toaster.hidden = true;
-  }, 3000);
 };
 
 $taskInput.addEventListener("input", () => {
