@@ -84,13 +84,11 @@ const createTask = (taskTitle) => {
 const updateTask = (newTitle, taskIndex, newId, editButton) => {
   if (newTitle.trim().length > 0) {
     tasks[taskIndex].title = newTitle.trim();
-  if (newTitle.trim().length > 0) {
-    tasks[taskIndex].title = newTitle.trim();
     tasks[taskIndex].id = newId;
     currentTaskId = null;
     renderTasks();
   }
-  editButton.hidden = "true";
+  editButton.hidden = true;
 };
 
 const cancelEdit = () => {
