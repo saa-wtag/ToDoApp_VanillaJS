@@ -1,16 +1,16 @@
 import { $taskInput, $addButton, $taskList } from "./elements.js";
-import { showToastMessage } from "./utilities.js";
+import { showToastMessage, handleInputChange } from "./utilities.js";
 
 let tasks = [];
 let currentTaskId = null;
 
 const addButtonHandler = () => {
-    const taskTitle = $taskInput.value.trim();
-    if (taskTitle) {
-        createTask(taskTitle);
-        showToastMessage("Task added successfully!");
-        $addButton.disabled = true;
-    }
+  const taskTitle = $taskInput.value.trim();
+  if (taskTitle) {
+    createTask(taskTitle);
+    showToastMessage("Task added successfully!");
+    $addButton.disabled = true;
+  }
 };
 
 const deleteHandler = (taskId) => {
@@ -47,14 +47,9 @@ const editHandler = (taskId, currentTitleElement, editButton) => {
     cancelEdit();
   });
 
-  const handleInputChange = () => {
-    const trimmedValue = $inputField.value.trim();
-    $updateButton.disabled = !(
-      trimmedValue.length > 0 && trimmedValue !== currentTask.title
-    );
-  };
-
-  $inputField.addEventListener("input", handleInputChange);
+  $inputField.addEventListener("input", () => {
+    handleInputChange($inputField, $updateButton, currentTask);
+  });
 
   $updateButton.addEventListener("click", () => {
     updateTask($inputField.value.trim(), taskIndex, newId, editButton);
@@ -119,11 +114,11 @@ const renderTasks = () => {
 };
 
 $taskInput.addEventListener("input", () => {
-    if ($taskInput.value.trim()) {
-        $addButton.disabled = false;
-    } else {
-        $addButton.disabled = true;
-    }
+  if ($taskInput.value.trim()) {
+    $addButton.disabled = false;
+  } else {
+    $addButton.disabled = true;
+  }
 });
 
 $addButton.addEventListener("click", addButtonHandler);

@@ -7,3 +7,10 @@ export const showToastMessage = (message) => {
     $toaster.hidden = true;
   }, 3000);
 };
+
+export const handleInputChange = ($inputField, $updateButton, currentTask) => {
+    const trimmedValue = $inputField.value.trim();
+    $updateButton.disabled = !(
+      trimmedValue.length > 0 && trimmedValue !== currentTask.title
+    );
+  };
