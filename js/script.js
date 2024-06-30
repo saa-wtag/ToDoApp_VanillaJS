@@ -1,4 +1,10 @@
-import { $taskInput, $addButton, $taskList } from "./elements.js";
+import {
+  $taskInput,
+  $addButton,
+  $taskList,
+  $searchInput,
+  $searchButton,
+} from "./elements.js";
 import {
   showToastMessage,
   handleInputChange,
@@ -16,9 +22,23 @@ const addButtonHandler = () => {
   }
 };
 
+const searchButtonHandler = () => {
+  const searchTitle = $searchInput.value.trim();
+
+  if (searchTitle) {
+    const filteredTasks = tasks.filter((task) =>
+      task.title.toLowerCase().includes(searchTitle.toLowerCase())
+    );
+    renderTasks(filteredTasks);
+  } else {
+    renderTasks(tasks);
+  }
+  $searchInput.value = "";
+};
+
 const deleteHandler = (taskId) => {
   tasks = tasks.filter((task) => task.id !== taskId);
-  renderTasks();
+  renderTasks(tasks);
 };
 
 const editHandler = (task) => {
@@ -32,14 +52,14 @@ const updateHandler = (task, newTitle) => {
     task.title = newTitle.trim();
   }
   cancelEdit();
-  renderTasks();
+  renderTasks(tasks);
 };
 
 const doneHandler = (taskId) => {
   const task = tasks.find((task) => task.id === taskId);
   if (task) {
     task.done = !task.done;
-    renderTasks();
+    renderTasks(tasks);
   }
 };
 
@@ -50,12 +70,13 @@ const createTask = (taskTitle) => {
     done: false,
     editMode: false,
   });
-  renderTasks();
+  renderTasks(tasks);
   $taskInput.value = "";
   $addButton.disabled = true;
 };
 
-const renderTasks = () => {
+const renderTasks = (tasks = []) => {
+  console.log(tasks);
   $taskList.innerHTML = "";
   tasks.forEach((task) => {
     const $tasksList = document.createElement("li");
@@ -99,7 +120,7 @@ const renderTasks = () => {
 
 const cancelEdit = () => {
   tasks.forEach((task) => (task.editMode = false));
-  renderTasks();
+  renderTasks(tasks);
 };
 
 $taskInput.addEventListener("input", () => {
@@ -107,3 +128,4 @@ $taskInput.addEventListener("input", () => {
 });
 
 $addButton.addEventListener("click", addButtonHandler);
+$searchButton.addEventListener("click", searchButtonHandler);
