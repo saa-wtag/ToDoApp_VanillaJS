@@ -1,4 +1,4 @@
-import {$taskInput, $addButton, $taskList, $toaster } from "./elements.js";
+import { $taskInput, $addButton, $taskList, $toaster } from "./elements.js";
 
 let tasks = [];
 let currentTaskId = null;
@@ -30,7 +30,7 @@ const editHandler = (taskId, currentTitleElement, editButton) => {
   const taskIndex = tasks.findIndex((task) => task.id === taskId);
   const currentTask = tasks[taskIndex];
   const newId = new Date().getTime();
-  editButton.style.display = "none";
+  editButton.hidden = true;
 
   const $inputField = document.createElement("input");
   $inputField.type = "text";
@@ -65,17 +65,16 @@ const editHandler = (taskId, currentTitleElement, editButton) => {
   currentTitleElement.appendChild($cancelButton);
 };
 
-const createTask = (taskTitle)=>{
-    const task = {
-        id: new Date().getTime(),
-        title: taskTitle
-    };
-    tasks.unshift(task);
-    renderTasks();
+const createTask = (taskTitle) => {
+  const task = {
+    id: new Date().getTime(),
+    title: taskTitle,
+  };
+  tasks.unshift(task);
+  renderTasks();
 
   $taskInput.value = "";
 };
-
 
 const updateTask = (newTitle, taskIndex, newId, editButton) => {
   if (newTitle.trim().length > 0) {
@@ -84,7 +83,7 @@ const updateTask = (newTitle, taskIndex, newId, editButton) => {
     currentTaskId = null;
     renderTasks();
   }
-  editButton.style.display = "block";
+  editButton.hidden = "true";
 };
 
 const cancelEdit = () => {
@@ -113,7 +112,7 @@ const renderTasks = () => {
     $tasksList.appendChild($titleElement);
     $tasksList.appendChild($deleteButton);
     $tasksList.appendChild($editButton);
-    
+
     $taskList.appendChild($tasksList);
   });
 };
