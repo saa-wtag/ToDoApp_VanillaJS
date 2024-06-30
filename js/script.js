@@ -4,12 +4,12 @@ import { showToastMessage } from "./utilities.js";
 let tasks = [];
 
 const addButtonHandler = () => {
-    const taskTitle = $taskInput.value.trim();
-    if (taskTitle) {
-        createTask(taskTitle);
-        showToastMessage("Task added successfully!");
-        $addButton.disabled = true;
-    }
+  const taskTitle = $taskInput.value.trim();
+  if (taskTitle) {
+    createTask(taskTitle);
+    showToastMessage("Task added successfully!");
+    $addButton.disabled = true;
+  }
 };
 
 const deleteHandler = (taskId) => {
@@ -45,11 +45,11 @@ const renderTasks = () => {
 };
 
 $taskInput.addEventListener("input", () => {
-    if ($taskInput.value.trim()) {
-        $addButton.disabled = false;
-    } else {
-        $addButton.disabled = true;
-    }
+  if ($taskInput.value.trim()) {
+    $addButton.disabled = false;
+  } else {
+    $addButton.disabled = true;
+  }
 });
 
 $addButton.addEventListener("click", addButtonHandler);
