@@ -1,5 +1,9 @@
 import { $taskInput, $addButton, $taskList } from "./elements.js";
-import { showToastMessage, handleInputChange,  createButton } from "./utilities.js";
+import {
+  showToastMessage,
+  handleInputChange,
+  createButton,
+} from "./utilities.js";
 
 let tasks = [];
 
@@ -13,26 +17,26 @@ const addButtonHandler = () => {
 };
 
 const deleteHandler = (taskId) => {
-  tasks = tasks.filter(task => task.id !== taskId);
+  tasks = tasks.filter((task) => task.id !== taskId);
   renderTasks();
 };
 
 const editHandler = (task) => {
-  cancelEdit(); 
-  task.editMode = true; 
+  cancelEdit();
+  task.editMode = true;
   renderTasks();
 };
 
 const updateHandler = (task, newTitle) => {
   if (newTitle.trim().length > 0) {
-    task.title = newTitle.trim(); 
+    task.title = newTitle.trim();
   }
-  cancelEdit(); 
+  cancelEdit();
   renderTasks();
 };
 
 const doneHandler = (taskId) => {
-  const task = tasks.find(task => task.id === taskId);
+  const task = tasks.find((task) => task.id === taskId);
   if (task) {
     task.done = !task.done;
     renderTasks();
@@ -44,7 +48,7 @@ const createTask = (taskTitle) => {
     id: new Date().getTime(),
     title: taskTitle,
     done: false,
-    editMode: false
+    editMode: false,
   });
   renderTasks();
   $taskInput.value = "";
@@ -53,7 +57,7 @@ const createTask = (taskTitle) => {
 
 const renderTasks = () => {
   $taskList.innerHTML = "";
-  tasks.forEach(task => {
+  tasks.forEach((task) => {
     const $tasksList = document.createElement("li");
     const $titleElement = document.createElement("span");
     $titleElement.textContent = task.title;
@@ -66,7 +70,9 @@ const renderTasks = () => {
       $inputField.type = "text";
       $inputField.value = task.title;
 
-      const $updateButton = createButton("Update", () => updateHandler(task, $inputField.value));
+      const $updateButton = createButton("Update", () =>
+        updateHandler(task, $inputField.value)
+      );
       const $cancelButton = createButton("Cancel", cancelEdit);
 
       $inputField.addEventListener("input", () => {
@@ -75,7 +81,9 @@ const renderTasks = () => {
 
       $tasksList.append($inputField, $updateButton, $cancelButton);
     } else {
-      const $deleteButton = createButton("Delete", () => deleteHandler(task.id));
+      const $deleteButton = createButton("Delete", () =>
+        deleteHandler(task.id)
+      );
       const $editButton = createButton("Edit", () => editHandler(task));
       const $doneButton = createButton("Done", () => doneHandler(task.id));
 
@@ -90,7 +98,7 @@ const renderTasks = () => {
 };
 
 const cancelEdit = () => {
-  tasks.forEach(task => task.editMode = false); 
+  tasks.forEach((task) => (task.editMode = false));
   renderTasks();
 };
 
@@ -99,5 +107,3 @@ $taskInput.addEventListener("input", () => {
 });
 
 $addButton.addEventListener("click", addButtonHandler);
-
-
