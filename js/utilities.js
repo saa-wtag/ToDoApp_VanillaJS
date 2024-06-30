@@ -9,15 +9,15 @@ export const showToastMessage = (message) => {
 };
 
 export const handleInputChange = ($inputField, $updateButton, currentTask) => {
-    const trimmedValue = $inputField.value.trim();
-    $updateButton.disabled = !(
-      trimmedValue.length > 0 && trimmedValue !== currentTask.title
-    );
-  };
+  const trimmedValue = $inputField.value.trim();
+  $updateButton.disabled = !(
+    trimmedValue.length > 0 && trimmedValue !== currentTask.title
+  );
+};
 
-  export const createButton = (text, onClick) => {
-    const $button = document.createElement("button");
-    $button.innerText = text;
-    $button.addEventListener("click", onClick);
-    return $button;
-  };
+export const createButton = (text, onClick) => {
+  const $button = document.createElement("button");
+  $button.innerText = text;
+  $button.addEventListener("click", onClick);
+  return $button;
+};
