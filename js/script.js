@@ -29,7 +29,11 @@ const searchButtonHandler = () => {
     const filteredTasks = tasks.filter((task) =>
       task.title.toLowerCase().includes(searchTitle.toLowerCase())
     );
-    renderTasks(filteredTasks);
+    if (filteredTasks.length > 0) {
+      renderTasks(filteredTasks);
+    } else {
+      showToastMessage("No tasks found matching the search.");
+    }
   } else {
     renderTasks(tasks);
   }
@@ -76,7 +80,6 @@ const createTask = (taskTitle) => {
 };
 
 const renderTasks = (tasks = []) => {
-  console.log(tasks);
   $taskList.innerHTML = "";
   tasks.forEach((task) => {
     const $tasksList = document.createElement("li");
