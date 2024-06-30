@@ -31,11 +31,6 @@ const updateHandler = (task, newTitle) => {
   renderTasks();
 };
 
-const cancelEdit = () => {
-  tasks.forEach(task => task.editMode = false); 
-  renderTasks();
-};
-
 const doneHandler = (taskId) => {
   const task = tasks.find(task => task.id === taskId);
   if (task) {
@@ -92,6 +87,11 @@ const renderTasks = () => {
 
     $taskList.appendChild($tasksList);
   });
+};
+
+const cancelEdit = () => {
+  tasks.forEach(task => task.editMode = false); 
+  renderTasks();
 };
 
 $taskInput.addEventListener("input", () => {
