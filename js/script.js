@@ -1,4 +1,4 @@
-import {$taskInput, $addButton, $taskList, $toaster } from "./elements.js";
+import { $taskInput, $addButton, $taskList, $toaster } from "./elements.js";
 
 let tasks = [];
 
@@ -11,6 +11,11 @@ const addButtonHandler = () => {
   }
 };
 
+const deleteHandler = (taskId) => {
+  tasks = tasks.filter((task) => task.id !== taskId);
+  renderTasks();
+};
+
 const createTask = (taskTitle) => {
   const task = {
     id: new Date().getTime(),
@@ -20,11 +25,6 @@ const createTask = (taskTitle) => {
   renderTasks();
 
   $taskInput.value = "";
-};
-
-const deleteHandler = (taskId) => {
-  tasks = tasks.filter((task) => task.id !== taskId);
-  renderTasks();
 };
 
 const renderTasks = () => {
