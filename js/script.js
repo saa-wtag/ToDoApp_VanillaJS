@@ -12,18 +12,6 @@ const addButtonHandler = () => {
   }
 };
 
-
-const createTask = (taskTitle)=>{
-    const task = {
-        id: new Date().getTime(),
-        title: taskTitle
-    };
-    tasks.unshift(task);
-    renderTasks();
-
-  $taskInput.value = "";
-};
-
 const deleteHandler = (taskId) => {
   tasks = tasks.filter((task) => task.id !== taskId);
   if (currentTaskId === taskId) {
@@ -46,19 +34,29 @@ const editHandler = (taskId, currentTitleElement, editButton) => {
 
   const $inputField = document.createElement("input");
   $inputField.type = "text";
-  $inputField.value = currentTask.title.trim();
-  $inputField.classList.add("edit-input");
+  $inputField.value = currentTask.title;
 
   const $updateButton = document.createElement("button");
   $updateButton.innerText = "Update";
-  $updateButton.addEventListener("click", () => {
-    updateTask($inputField.value.trim() + " ", taskIndex, newId, editButton);
-  });
+  $updateButton.disabled = true;
 
   const $cancelButton = document.createElement("button");
   $cancelButton.innerText = "Cancel";
   $cancelButton.addEventListener("click", () => {
     cancelEdit();
+  });
+
+  const handleInputChange = () => {
+    const trimmedValue = $inputField.value.trim();
+    $updateButton.disabled = !(
+      trimmedValue.length > 0 && trimmedValue !== currentTask.title
+    );
+  };
+
+  $inputField.addEventListener("input", handleInputChange);
+
+  $updateButton.addEventListener("click", () => {
+    updateTask($inputField.value.trim(), taskIndex, newId, editButton);
   });
 
   currentTitleElement.textContent = "";
@@ -67,15 +65,24 @@ const editHandler = (taskId, currentTitleElement, editButton) => {
   currentTitleElement.appendChild($cancelButton);
 };
 
+const createTask = (taskTitle)=>{
+    const task = {
+        id: new Date().getTime(),
+        title: taskTitle
+    };
+    tasks.unshift(task);
+    renderTasks();
+
+  $taskInput.value = "";
+};
+
+
 const updateTask = (newTitle, taskIndex, newId, editButton) => {
-  if (newTitle) {
-    tasks[taskIndex].title = newTitle;
+  if (newTitle.trim().length > 0) {
+    tasks[taskIndex].title = newTitle.trim();
     tasks[taskIndex].id = newId;
-    console.log(tasks[taskIndex].id);
     currentTaskId = null;
     renderTasks();
-  } else {
-    alert("Please provide valid Task.");
   }
   editButton.style.display = "block";
 };
@@ -104,9 +111,9 @@ const renderTasks = () => {
     );
 
     $tasksList.appendChild($titleElement);
-    $tasksList.appendChild($editButton);
     $tasksList.appendChild($deleteButton);
-
+    $tasksList.appendChild($editButton);
+    
     $taskList.appendChild($tasksList);
   });
 };
