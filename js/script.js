@@ -50,6 +50,11 @@ $taskInput.addEventListener("input", () => {
   } else {
     $addButton.disabled = true;
   }
+  if ($taskInput.value.trim()) {
+    $addButton.disabled = false;
+  } else {
+    $addButton.disabled = true;
+  }
 });
 
 $addButton.addEventListener("click", addButtonHandler);
