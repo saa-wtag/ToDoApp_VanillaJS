@@ -87,7 +87,11 @@ const cancelEdit = () => {
 };
 
 $taskInput.addEventListener("input", () => {
-  $addButton.disabled = !$taskInput.value.trim();
+  if ($taskInput.value.trim()) {
+    $addButton.disabled = false;
+  } else {
+    $addButton.disabled = true;
+  }
 });
 
 $addButton.addEventListener("click", addButtonHandler);
