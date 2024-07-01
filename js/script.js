@@ -12,7 +12,7 @@ const addButtonHandler = () => {
   }
 };
 
-const deleteHandler = (taskId) => {
+const deleteTask = (taskId) => {
   tasks = tasks.filter((task) => task.id !== taskId);
   renderTasks();
 };
@@ -37,7 +37,7 @@ const renderTasks = () => {
 
     const deleteButton = document.createElement("button");
     deleteButton.innerText = "Delete";
-    deleteButton.addEventListener("click", () => deleteHandler(task.id));
+    deleteButton.addEventListener("click", () => deleteTask(task.id));
 
     tasksList.appendChild(deleteButton);
     $taskList.appendChild(tasksList);
