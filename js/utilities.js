@@ -10,5 +10,5 @@ export const showToastMessage = (message) => {
 
 export const sanitizeInput = (value) => {
   const reg = /[&<>"'/`]/gi;
-  return value.replace(reg, "");
+  return value.replace(reg, "").trim();
 };

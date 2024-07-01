@@ -4,7 +4,7 @@ import { showToastMessage, sanitizeInput } from "./utilities.js";
 let tasks = [];
 
 const addButtonHandler = () => {
-  const taskTitle = sanitizeInput($taskInput.value).trim();
+  const taskTitle = sanitizeInput($taskInput.value);
   if (taskTitle) {
     tasks.unshift(taskTitle);
     const $tasksList = document.createElement("li");
