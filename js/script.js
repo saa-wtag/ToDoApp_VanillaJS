@@ -1,5 +1,10 @@
 import { $taskInput, $addButton, $taskList } from "./elements.js";
-import { showToastMessage, sanitizeInput, createElement, formatDate } from "./utilities.js";
+import {
+  showToastMessage,
+  sanitizeInput,
+  createElement,
+  formatDate,
+} from "./utilities.js";
 
 let tasks = [];
 
@@ -9,9 +14,7 @@ const addButtonHandler = () => {
     createTask(taskTitle);
     showToastMessage("Task added successfully!");
     $addButton.disabled = true;
-  }
-  else
-    showToastMessage("Please provide a valid title!");
+  } else showToastMessage("Please provide a valid title!");
 };
 
 const deleteTask = (taskId) => {
@@ -23,7 +26,7 @@ const createTask = (taskTitle) => {
   const task = {
     id: new Date().getTime(),
     title: taskTitle,
-    createdAt: formatDate(new Date())
+    createdAt: formatDate(new Date()),
   };
   tasks.unshift(task);
   renderTasks();
