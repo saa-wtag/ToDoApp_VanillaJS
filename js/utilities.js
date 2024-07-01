@@ -10,5 +10,13 @@ export const showToastMessage = (message) => {
 
 export const sanitizeInput = (value) => {
   const reg = /[&<>"'/`]/gi;
-  return value.replace(reg, "");
+  return value.replace(reg, "").trim();
+};
+
+export const createElement = (text, type, onClick) => {
+  const $element = document.createElement(type);
+  $element.innerText = text;
+  if(onClick)
+    $element.addEventListener("click", onClick);
+  return $element;
 };

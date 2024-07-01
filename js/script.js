@@ -1,10 +1,10 @@
 import { $taskInput, $addButton, $taskList } from "./elements.js";
-import { showToastMessage, sanitizeInput } from "./utilities.js";
+import { showToastMessage, sanitizeInput, createElement } from "./utilities.js";
 
 let tasks = [];
 
 const addButtonHandler = () => {
-  const taskTitle = sanitizeInput($taskInput.value).trim();
+  const taskTitle = sanitizeInput($taskInput.value);
   if (taskTitle) {
     createTask(taskTitle);
     showToastMessage("Task added successfully!");
@@ -32,15 +32,12 @@ const renderTasks = () => {
   $taskList.innerHTML = "";
 
   tasks.forEach((task) => {
-    const tasksList = document.createElement("li");
-    tasksList.textContent = task.title;
-
-    const deleteButton = document.createElement("button");
-    deleteButton.innerText = "Delete";
-    deleteButton.addEventListener("click", () => deleteTask(task.id));
-
-    tasksList.appendChild(deleteButton);
-    $taskList.appendChild(tasksList);
+    const $tasksList = createElement(task.title, "li");
+    const $deleteButton = createElement("Delete", "button", () =>
+      deleteTask(task.id)
+    );
+    $tasksList.appendChild($deleteButton);
+    $taskList.appendChild($tasksList);
   });
 };
 
