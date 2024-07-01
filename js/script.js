@@ -1,10 +1,10 @@
 import { $taskInput, $addButton, $taskList } from "./elements.js";
-import { showToastMessage } from "./utilities.js";
+import { showToastMessage, sanitizeInput } from "./utilities.js";
 
 let tasks = [];
 
 const addButtonHandler = () => {
-  const taskTitle = $taskInput.value.trim();
+  const taskTitle = sanitizeInput($taskInput.value).trim();
   if (taskTitle) {
     createTask(taskTitle);
     showToastMessage("Task added successfully!");
