@@ -7,3 +7,8 @@ export const showToastMessage = (message) => {
     $toaster.hidden = true;
   }, 3000);
 };
+
+export const sanitizeInput = (value) => {
+  const reg = /[&<>"'/`]/gi;
+  return value.replace(reg, "");
+};
