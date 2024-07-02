@@ -1,9 +1,11 @@
 import {
+  $mainContainer,
   $taskInput,
   $addButton,
   $taskList,
   $searchInput,
   $searchButton,
+  $splash
 } from "./elements.js";
 import {
   showToastMessage,
@@ -129,6 +131,13 @@ const cancelEdit = () => {
 $taskInput.addEventListener("input", () => {
   $addButton.disabled = !$taskInput.value.trim();
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+      $splash.style.display = 'none';
+      $mainContainer.hidden = false;
+    }, 1000);
+  });
 
 $addButton.addEventListener("click", addButtonHandler);
 $searchButton.addEventListener("click", searchButtonHandler);
