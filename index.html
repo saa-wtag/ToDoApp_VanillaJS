@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ToDoApp</title>
     <link rel="stylesheet" href="./styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div class="splash" id="splash-screen">
@@ -19,23 +23,45 @@
           <div class="search-icon">
             <input type="text" id="search-input" />
             <button class="button" id="search-button">
-                <img src="./icons/search-icon.svg" alt="search" />
+              <img src="./icons/search-icon.svg" alt="search" />
             </button>
           </div>
         </div>
       </header>
-      <div>
-
-      </div>
-      <div>
-        <input type="text" id="task-input" placeholder="Write your task" />
-        <button id="add-button" disabled>Add Task</button>
-      </div>
-      <div>
-        <h5 id="message" hidden></h5>
-      </div>
-      <div class="tasks-container">
-        <ul id="tasks"></ul>
+      <div class="body-container">
+        <h2>Add Tasks</h2>
+        <div class="top-buttons-container">
+          <div class="left-buttons">
+            <button id="button-create">
+              <img src="./icons/plus-icon.svg" alt="Plus Icon" />
+              Create
+            </button>
+          </div>
+          <div class="right-buttons">
+            <button class="filters-button">All</button>
+            <button class="filters-button">Incomplete</button>
+            <button class="filters-button">Complete</button>
+          </div>
+        </div>
+        <div class="create-task-container">
+          <div>
+            <textarea id="task-input"></textarea>
+          </div>
+          <div class="create-task-buttons">
+            <button class="filters-button" id="add-button" disabled>
+              Add Task
+            </button>
+            <button id="button-delete">
+              <img src="./icons/delete-icon.svg" alt="Delete" />
+            </button>
+          </div>
+        </div>
+        <div>
+          <h5 id="message" hidden></h5>
+        </div>
+        <div class="tasks-container">
+          <ul id="tasks"></ul>
+        </div>
       </div>
     </div>
     <script type="module" src="./js/script.js"></script>
