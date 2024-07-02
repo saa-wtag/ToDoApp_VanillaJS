@@ -8,26 +8,35 @@
   </head>
   <body>
     <div class="splash" id="splash-screen">
-        <img src="./icons/logo.svg">
+      <img src="./icons/logo.svg" />
     </div>
     <div class="main-container" id="container" hidden>
-        <header>
-            <h1>ToDoApp</h1>
-          </header>
-          <div>
-            <input type="text" id="search-input" placeholder="Search tasks" />
-            <button id="search-button">Search</button>
+      <header>
+        <div class="header-container">
+          <div class="top-icon">
+            <img src="./icons/logo.svg" alt="Todos" />
           </div>
-          <div>
-            <input type="text" id="task-input" placeholder="Write your task" />
-            <button id="add-button" disabled>Add Task</button>
+          <div class="search-icon">
+            <input type="text" id="search-input" />
+            <button class="button" id="search-button">
+                <img src="./icons/search-icon.svg" alt="search" />
+            </button>
           </div>
-          <div>
-            <h5 id="message" hidden></h5>
-          </div>
-          <div class="tasks-container">
-            <ul id="tasks"></ul>
-          </div>
+        </div>
+      </header>
+      <div>
+
+      </div>
+      <div>
+        <input type="text" id="task-input" placeholder="Write your task" />
+        <button id="add-button" disabled>Add Task</button>
+      </div>
+      <div>
+        <h5 id="message" hidden></h5>
+      </div>
+      <div class="tasks-container">
+        <ul id="tasks"></ul>
+      </div>
     </div>
     <script type="module" src="./js/script.js"></script>
   </body>
