@@ -29,10 +29,15 @@
         </div>
       </header>
       <div class="body-container">
-        <h2>Add Tasks</h2>
+        <div class="toast-container" id="toast-container">
+          <p id="message"></p>
+        </div>
+        <div id="top-title">
+          <h2>Add Tasks</h2>
+        </div>
         <div class="top-buttons-container">
           <div class="left-buttons">
-            <button id="button-create">
+            <button id="create-button">
               <img src="./icons/plus-icon.svg" alt="Plus Icon" />
               Create
             </button>
@@ -43,24 +48,12 @@
             <button class="filters-button">Complete</button>
           </div>
         </div>
-        <div class="create-task-container">
-          <div>
-            <textarea id="task-input"></textarea>
-          </div>
-          <div class="create-task-buttons">
-            <button class="filters-button" id="add-button" disabled>
-              Add Task
-            </button>
-            <button id="button-delete">
-              <img src="./icons/delete-icon.svg" alt="Delete" />
-            </button>
-          </div>
+        <div id="centered-image">
+          <img src="./icons/no-task-icon.svg" alt="Add Task" />
         </div>
+        <div class="tasks-container" id="tasks-container"></div>
         <div>
-          <h5 id="message" hidden></h5>
-        </div>
-        <div class="tasks-container">
-          <ul id="tasks"></ul>
+          <button id="load-more-button">Load More</button>
         </div>
       </div>
     </div>

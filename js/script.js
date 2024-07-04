@@ -1,27 +1,44 @@
 import {
   $mainContainer,
-  $taskInput,
   $addButton,
   $taskList,
   $searchInput,
   $searchButton,
-  $splash
+  $splash,
+  $noTask,
+  $taskListContainer,
+  $loadMore,
+  $createButton,
+  $taskAddBox,
 } from "./elements.js";
 import {
   showToastMessage,
   handleInputChange,
-  createButton,
+  toggleInputContainer,
+  containerBuilder,
+  createContainerBuilder,
 } from "./utilities.js";
 
 let tasks = [];
 
 const addButtonHandler = () => {
-  const taskTitle = $taskInput.value.trim();
+  const taskTitle = document.getElementById("task-input").value.trim();
   if (taskTitle) {
     createTask(taskTitle);
-    showToastMessage("Task added successfully!");
-    $addButton.disabled = true;
+    showToastMessage("√ Changes are saved successfully", true);
+  } else {
+    showToastMessage("We couldn't save your changes", false);
   }
+};
+
+const createButtonHandler = () => {
+  $taskListContainer.style.display = "grid";
+  $noTask.style.display = "none";
+
+  let inputContainer = createContainerBuilder(addButtonHandler);
+  $taskListContainer.appendChild(inputContainer);
+
+  toggleInputContainer();
 };
 
 const searchButtonHandler = () => {
@@ -50,7 +67,7 @@ const deleteHandler = (taskId) => {
 const editHandler = (task) => {
   cancelEdit();
   task.editMode = true;
-  renderTasks();
+  renderTasks(tasks);
 };
 
 const updateHandler = (task, newTitle) => {
@@ -77,50 +94,25 @@ const createTask = (taskTitle) => {
     editMode: false,
   });
   renderTasks(tasks);
-  $taskInput.value = "";
-  $addButton.disabled = true;
 };
 
 const renderTasks = (tasks = []) => {
-  $taskList.innerHTML = "";
+  $taskListContainer.innerHTML = "";
+
   tasks.forEach((task) => {
-    const $tasksList = document.createElement("li");
-    const $titleElement = document.createElement("span");
-    $titleElement.textContent = task.title;
-    if (task.done) {
-      $titleElement.style.textDecoration = "line-through";
-    }
-
-    if (task.editMode) {
-      const $inputField = document.createElement("input");
-      $inputField.type = "text";
-      $inputField.value = task.title;
-
-      const $updateButton = createButton("Update", () =>
-        updateHandler(task, $inputField.value)
-      );
-      const $cancelButton = createButton("Cancel", cancelEdit);
-
-      $inputField.addEventListener("input", () => {
-        handleInputChange($inputField, $updateButton, task);
-      });
-
-      $tasksList.append($inputField, $updateButton, $cancelButton);
-    } else {
-      const $deleteButton = createButton("Delete", () =>
-        deleteHandler(task.id)
-      );
-      const $editButton = createButton("Edit", () => editHandler(task));
-      const $doneButton = createButton("Done", () => doneHandler(task.id));
-
-      $tasksList.append($titleElement, $deleteButton);
-      if (!task.done) {
-        $tasksList.append($editButton, $doneButton);
-      }
-    }
-
-    $taskList.appendChild($tasksList);
+    containerBuilder(task, doneHandler, editHandler, deleteHandler, updateHandler);
   });
+
+  if (tasks.length === 0) {
+    $noTask.style.display = "block";
+  } else {
+    $noTask.style.display = "none";
+  }
+};
+
+const renderNoTasks = () => {
+  $taskListContainer.style.display = "none";
+  $loadMore.style.display = "none";
 };
 
 const cancelEdit = () => {
@@ -128,16 +120,16 @@ const cancelEdit = () => {
   renderTasks(tasks);
 };
 
-$taskInput.addEventListener("input", () => {
-  $addButton.disabled = !$taskInput.value.trim();
+document.addEventListener("DOMContentLoaded", function () {
+  setTimeout(function () {
+    $splash.style.display = "none";
+    $mainContainer.hidden = false;
+    if (tasks.length === 0) {
+      renderNoTasks();
+    }
+  }, 1000);
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    setTimeout(function () {
-      $splash.style.display = 'none';
-      $mainContainer.hidden = false;
-    }, 1000);
-  });
-
-$addButton.addEventListener("click", addButtonHandler);
+$noTask.addEventListener("click", createButtonHandler);
+$createButton.addEventListener("click", createButtonHandler);
 $searchButton.addEventListener("click", searchButtonHandler);
