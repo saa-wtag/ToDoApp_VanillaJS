@@ -18,23 +18,37 @@ export const handleInputChange = ($inputField, $updateButton, currentTask) => {
   );
 };
 
-export const createButton = (text, onClick) => {
-  const $button = document.createElement("button");
-  $button.innerText = text;
-  $button.addEventListener("click", onClick);
-  return $button;
+export const toggleInputContainer = (
+  isVisible,
+  addButtonHandler,
+  $inputContainer,
+  $noTask,
+  tasksLength
+) => {
+  if (isVisible) {
+    $taskListContainer.style.display = "grid";
+    let inputContainer = createContainerBuilder(addButtonHandler);
+    $taskListContainer.appendChild(inputContainer);
+  } else {
+    $inputContainer = document.getElementById("input-container");
+    $inputContainer.remove();      
+  }
 };
 
-export const toggleInputContainer = () => {
-  const inputContainer = document.getElementById("input-container");
-  if (
-    inputContainer.style.display === "none" ||
-    inputContainer.style.display === ""
-  ) {
-    inputContainer.style.display = "block";
+const createButton = (id, imgSrc, alt, handler) => {
+  const button = document.createElement("button");
+  button.classList.add("card-buttons");
+  button.id = id;
+  if (imgSrc) {
+    const img = document.createElement("img");
+    img.src = imgSrc;
+    img.alt = alt;
+    button.appendChild(img);
   } else {
-    inputContainer.style.display = "none";
+    button.textContent = alt;
   }
+  button.addEventListener("click", handler);
+  return button;
 };
 
 export const createContainerBuilder = (addButtonHandler) => {
@@ -80,82 +94,53 @@ export const containerBuilder = (
   deleteHandler,
   updateHandler
 ) => {
-  const taskContainer = document.createElement("div");
-  taskContainer.classList.add("task-container");
+  const taskContainer = createElement("div", ["task-container"]);
   taskContainer.id = task.done ? "done-task-unit" : "remaining-task-unit";
 
-  const taskInfo = document.createElement("div");
-  const saveButton = document.createElement("button");
+  const taskInfo = createElement("div");
+  const taskButtons = createElement("div", ["task-buttons"]);
 
-  if (task.editMode) {
-    const taskInput = document.createElement("textarea");
-    taskInput.id = "task-input";
-    taskInput.value = task.title;
-    taskContainer.appendChild(taskInput);
+  const content = task.editMode
+    ? buildEditModeContent(task)
+    : buildNormalModeContent(task);
 
-    saveButton.classList.add("filters-button");
-    saveButton.id = "save-button";
-    saveButton.textContent = "Save";
-    saveButton.addEventListener("click", updateHandler(task, taskInput.value));
-  } else {
-    const taskTitle = document.createElement("p");
-    taskTitle.classList.add("task-title");
-    taskTitle.id = task.done ? "done-title" : "not-done-title";
-    taskTitle.textContent = task.title;
-
-    const createdAt = document.createElement("p");
-    createdAt.id = "task-created-at";
-    createdAt.textContent = `Created At: ${
-      task.createdAt || new Date().toLocaleDateString()
-    }`;
-
-    taskInfo.append(taskTitle, createdAt);
-  }
-
-  const taskButtons = document.createElement("div");
-  taskButtons.classList.add("task-buttons");
-  if (task.done) {
-    taskButtons.id = "done-task-buttons";
-  }
-
-  const createButton = (id, imgSrc, alt, handler) => {
-    const button = document.createElement("button");
-    button.classList.add("card-buttons");
-    button.id = id;
-    const img = document.createElement("img");
-    img.src = imgSrc;
-    img.alt = alt;
-    button.appendChild(img);
-    button.addEventListener("click", handler);
-    return button;
-  };
+  taskContainer.append(taskInfo, taskButtons);
+  taskInfo.append(...content);
 
   if (task.done) {
-    const doneAt = document.createElement("p");
-    doneAt.id = "task-done-at";
+    task.editMode = false;
+    const doneAt = createElement("p");
     doneAt.textContent = `Completed in ${calculateCompletionTime(task)} days`;
-    taskButtons.append(
+    doneAt.id = "task-done-at";
+    taskButtons.id = "done-task-buttons";
+    taskButtons.prepend(doneAt);
+
+    taskButtons.prepend(
       createButton("delete-button", "./icons/delete-icon.svg", "Delete", () =>
         deleteHandler(task.id)
-      ),
-      doneAt
+      )
     );
-    if (taskTitle) {
-      taskTitle.style.textDecoration = "line-through";
-    }
   } else {
     if (!task.editMode) {
       taskButtons.append(
         createButton("edit-button", "./icons/edit-icon.svg", "Edit", () =>
           editHandler(task)
-        ),
-        createButton("done-button", "./icons/done-icon.svg", "Done", () =>
-          doneHandler(task.id)
         )
       );
     } else {
-      taskButtons.append(saveButton);
+      taskButtons.append(
+        createButton("save-button", null, "Save", () =>
+          updateHandler(task, content[0].value.trim())
+        )
+      );
     }
+
+    taskButtons.append(
+      createButton("done-button", "./icons/done-icon.svg", "Done", () =>
+        doneHandler(task.id)
+      )
+    );
+
     taskButtons.append(
       createButton("delete-button", "./icons/delete-icon.svg", "Delete", () =>
         deleteHandler(task.id)
@@ -163,12 +148,37 @@ export const containerBuilder = (
     );
   }
 
-  taskContainer.append(taskInfo, taskButtons);
   $taskListContainer.appendChild(taskContainer);
 };
 
+const createElement = (type, classes = []) => {
+  const element = document.createElement(type);
+  if (classes.length > 0) element.classList.add(...classes);
+  return element;
+};
+
+const buildEditModeContent = (task) => {
+  const taskInput = createElement("textarea");
+  taskInput.id = "task-input";
+  taskInput.value = task.title;
+  return [taskInput];
+};
+
+const buildNormalModeContent = (task) => {
+  const taskTitle = createElement("p", ["task-title"]);
+  taskTitle.textContent = task.title;
+  if (task.done) taskTitle.id = "done-title";
+
+  const createdAt = createElement("p");
+  createdAt.id = "task-created-at";
+  createdAt.textContent = `Created At: ${
+    task.createdAt || new Date().toLocaleDateString()
+  }`;
+  return [taskTitle, createdAt];
+};
+
 const calculateCompletionTime = (task) => {
-  const createdDate = new Date(task.createdAt);
+  const createdDate = new Date(task.id);
   const completedDate = new Date(task.completedAt || new Date());
   const timeDiff = Math.abs(completedDate - createdDate);
   const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
