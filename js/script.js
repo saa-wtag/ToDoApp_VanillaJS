@@ -14,7 +14,9 @@ const addButtonHandler = () => {
     createTask(taskTitle);
     showToastMessage("Task added successfully!");
     $addButton.disabled = true;
-  } else showToastMessage("Please provide a valid title!");
+  } else {
+    showToastMessage("Please provide a valid title!");
+  }
 };
 
 const deleteTask = (taskId) => {
