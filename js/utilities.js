@@ -177,9 +177,7 @@ const buildNormalModeContent = (task) => {
 
   const createdAt = createElement("p");
   createdAt.id = "task-created-at";
-  createdAt.textContent = `Created At: ${
-    task.createdAt || new Date().toLocaleDateString()
-  }`;
+  createdAt.textContent = `Created At: ${formatCreatedAt(task.id)}`;
   return [taskTitle, createdAt];
 };
 
@@ -189,6 +187,14 @@ const calculateCompletionTime = (task) => {
   const timeDiff = Math.abs(completedDate - createdDate);
   const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
   return diffDays;
+};
+
+const formatCreatedAt = (createdAt) => {
+  const date = new Date(createdAt);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = String(date.getFullYear()).slice(-2);
+  return `${day}.${month}.${year}`;
 };
 
 export const showSpinnerOverlay = (targetContainer) => {
