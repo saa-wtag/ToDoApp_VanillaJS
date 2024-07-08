@@ -1,12 +1,24 @@
 import { $toaster, $toastBox, $taskListContainer } from "./elements.js";
+import {
+  COLORS,
+  ICONS,
+  MESSAGES,
+  TASK_BUTTON_CLASSES,
+  TASK_CONTAINER_CLASSES,
+  FILTER_BUTTON_CLASSES,
+  CARD_BUTTON_CLASSES,
+  TASK_TITLE_CLASSES,
+  OVERLAY_STYLES,
+  SPINNER_STYLES,
+} from "./const.js";
 
 export const showToastMessage = (message, isSuccess) => {
-  if (isSuccess) $toastBox.style.backgroundColor = "#0BC375"; // green
-  else $toastBox.style.backgroundColor = "#E85F5F"; //red
+  if (isSuccess) $toastBox.style.backgroundColor = COLORS.SUCCESS; // green
+  else $toastBox.style.backgroundColor = COLORS.ERROR; // red
   $toaster.textContent = message;
   $toaster.hidden = false;
   setTimeout(() => {
-    $toastBox.style.backgroundColor = "#ffffff";
+    $toastBox.style.backgroundColor = COLORS.DEFAULT;
     $toaster.hidden = true;
   }, 1500);
 };
@@ -31,7 +43,7 @@ export const toggleInputContainer = (isVisible, addButtonHandler) => {
 
 const createButton = (id, imgSrc, alt, handler) => {
   const button = document.createElement("button");
-  button.classList.add("card-buttons");
+  button.classList.add(...CARD_BUTTON_CLASSES);
   button.id = id;
   if (imgSrc) {
     const img = document.createElement("img");
@@ -47,7 +59,7 @@ const createButton = (id, imgSrc, alt, handler) => {
 
 export const createContainerBuilder = (addButtonHandler) => {
   const taskContainer = document.createElement("div");
-  taskContainer.classList.add("task-container");
+  taskContainer.classList.add(...TASK_CONTAINER_CLASSES);
   taskContainer.id = "input-container";
 
   const taskInputDiv = document.createElement("div");
@@ -56,10 +68,10 @@ export const createContainerBuilder = (addButtonHandler) => {
   taskInputDiv.appendChild(taskInput);
 
   const taskButtonsDiv = document.createElement("div");
-  taskButtonsDiv.classList.add("task-buttons");
+  taskButtonsDiv.classList.add(...TASK_BUTTON_CLASSES);
 
   const addButton = document.createElement("button");
-  addButton.classList.add("filters-button");
+  addButton.classList.add(...FILTER_BUTTON_CLASSES);
   addButton.id = "add-button";
   addButton.textContent = "Add Task";
   addButton.addEventListener("click", (event) => {
@@ -68,10 +80,10 @@ export const createContainerBuilder = (addButtonHandler) => {
   });
 
   const deleteButton = document.createElement("button");
-  deleteButton.classList.add("card-buttons");
+  deleteButton.classList.add(...CARD_BUTTON_CLASSES);
   deleteButton.id = "delete-button";
   const deleteImg = document.createElement("img");
-  deleteImg.src = "./icons/delete-icon.svg";
+  deleteImg.src = ICONS.DELETE;
   deleteImg.alt = "Delete";
   deleteButton.appendChild(deleteImg);
   deleteButton.addEventListener("click", () => {
@@ -90,11 +102,11 @@ export const containerBuilder = (
   deleteHandler,
   updateHandler
 ) => {
-  const taskContainer = createElement("div", ["task-container"]);
+  const taskContainer = createElement("div", TASK_CONTAINER_CLASSES);
   taskContainer.id = task.done ? "done-task-unit" : "remaining-task-unit";
 
   const taskInfo = createElement("div");
-  const taskButtons = createElement("div", ["task-buttons"]);
+  const taskButtons = createElement("div", TASK_BUTTON_CLASSES);
 
   const content = task.editMode
     ? buildEditModeContent(task)
@@ -112,16 +124,14 @@ export const containerBuilder = (
     taskButtons.prepend(doneAt);
 
     taskButtons.prepend(
-      createButton("delete-button", "./icons/delete-icon.svg", "Delete", () =>
+      createButton("delete-button", ICONS.DELETE, "Delete", () =>
         deleteHandler(task.id, taskContainer)
       )
     );
   } else {
     if (!task.editMode) {
       taskButtons.append(
-        createButton("edit-button", "./icons/edit-icon.svg", "Edit", () =>
-          editHandler(task)
-        )
+        createButton("edit-button", ICONS.EDIT, "Edit", () => editHandler(task))
       );
     } else {
       taskButtons.append(
@@ -132,13 +142,13 @@ export const containerBuilder = (
     }
 
     taskButtons.append(
-      createButton("done-button", "./icons/done-icon.svg", "Done", () =>
+      createButton("done-button", ICONS.DONE, "Done", () =>
         doneHandler(task.id, taskContainer)
       )
     );
 
     taskButtons.append(
-      createButton("delete-button", "./icons/delete-icon.svg", "Delete", () =>
+      createButton("delete-button", ICONS.DELETE, "Delete", () =>
         deleteHandler(task.id, taskContainer)
       )
     );
@@ -161,7 +171,7 @@ const buildEditModeContent = (task) => {
 };
 
 const buildNormalModeContent = (task) => {
-  const taskTitle = createElement("p", ["task-title"]);
+  const taskTitle = createElement("p", TASK_TITLE_CLASSES);
   taskTitle.textContent = task.title;
   if (task.done) taskTitle.id = "done-title";
 
@@ -183,24 +193,12 @@ const calculateCompletionTime = (task) => {
 
 export const showSpinnerOverlay = (targetContainer) => {
   const $overlay = document.createElement("div");
-  $overlay.style.position = "absolute";
-  $overlay.style.top = "0";
-  $overlay.style.left = "0";
-  $overlay.style.width = "100%";
-  $overlay.style.height = "100%";
-  $overlay.style.backgroundColor = "rgba(240, 240, 240, 0.4)";
-  $overlay.style.zIndex = "9999";
-  $overlay.style.display = "flex";
-  $overlay.style.justifyContent = "center";
-  $overlay.style.alignItems = "center";
+  Object.assign($overlay.style, OVERLAY_STYLES);
 
   const $spinnerImage = document.createElement("img");
-  $spinnerImage.src = "./icons/spinner-icon.svg";
+  $spinnerImage.src = ICONS.SPINNER;
   $spinnerImage.alt = "Loading...";
-  $spinnerImage.style.width = "50px";
-  $spinnerImage.style.height = "50px";
-  $spinnerImage.style.borderRadius = "50%";
-  $spinnerImage.style.animation = "spin 1s linear infinite";
+  Object.assign($spinnerImage.style, SPINNER_STYLES);
 
   $overlay.appendChild($spinnerImage);
   targetContainer.style.position = "relative";

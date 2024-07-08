@@ -15,6 +15,7 @@ import {
   showSpinnerOverlay,
   hideSpinnerOverlay,
 } from "./utilities.js";
+import { MESSAGES } from "./const.js";
 
 let tasks = [];
 let isVisible;
@@ -26,11 +27,11 @@ const addButtonHandler = (container) => {
     const $overlay = showSpinnerOverlay(container);
     setTimeout(() => {
       createTask(taskTitle);
-      showToastMessage("√ Changes are saved successfully", true);
+      showToastMessage(MESSAGES.SUCCESS, true);
       hideSpinnerOverlay($overlay);
     }, 1000);
   } else {
-    showToastMessage("We couldn't save your changes", false);
+    showToastMessage(MESSAGES.ERROR, false);
   }
 };
 
@@ -55,7 +56,7 @@ const searchButtonHandler = () => {
       if (filteredTasks.length > 0) {
         renderTasks(filteredTasks);
       } else {
-        showToastMessage("No tasks found matching the search.");
+        showToastMessage(MESSAGES.NO_TASKS_FOUND);
       }
     } else {
       renderTasks(tasks);

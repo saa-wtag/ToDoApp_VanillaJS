@@ -1,4 +1,3 @@
-//elements.js
 export const $mainContainer = document.getElementById("container");
 export const $bodyContainer = document.getElementById("body-container");
 export const $taskInput = document.getElementById("task-input");
