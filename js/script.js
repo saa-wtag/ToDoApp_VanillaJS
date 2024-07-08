@@ -28,7 +28,7 @@ const editHandler = (task) => {
   renderTasks();
 };
 
-const updateHandler = (task, newTitle) => {
+const updateHandler = (taskObj, newTitle) => {
   if (newTitle.trim().length > 0) {
     task.title = newTitle.trim();
   }
@@ -83,15 +83,10 @@ const renderTasks = () => {
 
       $tasksList.append($inputField, $updateButton, $cancelButton);
     } else {
-      const $deleteButton = createElement("Delete", "button", () =>
-        deleteTask(task.id)
+      const $deleteButton = createButton("Delete", () =>
+        deleteHandler(task.id)
       );
-      const $editButton = createElement("Edit", "button", () =>
-        editHandler(task)
-      );
-      const $doneButton = createElement("Done", "button", () =>
-        doneHandler(task.id)
-      );
+      const $editButton = createButton("Edit", () => editHandler(task));
 
       $tasksList.append($titleElement, $deleteButton);
       if (!task.done) {
