@@ -22,15 +22,15 @@ const deleteTask = (taskId) => {
   renderTasks();
 };
 
-const editHandler = (taskObj) => {
+const editHandler = (task) => {
   cancelEdit();
-  taskObj.editMode = true;
+  task.editMode = true;
   renderTasks();
 };
 
-const updateHandler = (taskObj, newTitle) => {
+const updateHandler = (task, newTitle) => {
   if (newTitle.trim().length > 0) {
-    taskObj.title = newTitle.trim();
+    task.title = newTitle.trim();
   }
   cancelEdit();
   renderTasks();
