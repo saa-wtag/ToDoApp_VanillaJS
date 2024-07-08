@@ -13,3 +13,7 @@ export const $taskListContainer = document.getElementById("tasks-container");
 export const $loadMore = document.getElementById("load-more-button");
 export const $createButton = document.getElementById("create-button");
 export const $taskAddBox = document.getElementById("input-container");
+export const $filterAllButton = document.getElementById("filter-all");
+export const $filterIncompleteButton =
+  document.getElementById("filter-incomplete");
+export const $filterCompleteButton = document.getElementById("filter-complete");

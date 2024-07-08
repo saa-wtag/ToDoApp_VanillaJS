@@ -208,6 +208,7 @@ export const showSpinnerOverlay = (targetContainer) => {
 };
 
 export const hideSpinnerOverlay = ($overlay) => {
-  const parent = $overlay.parentNode;
-  parent.removeChild($overlay);
+  if ($overlay && $overlay.parentNode) {
+    $overlay.parentNode.removeChild($overlay);
+  }
 };

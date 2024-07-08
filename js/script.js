@@ -7,6 +7,9 @@ import {
   $taskListContainer,
   $loadMore,
   $createButton,
+  $filterAllButton,
+  $filterIncompleteButton,
+  $filterCompleteButton,
 } from "./elements.js";
 import {
   showToastMessage,
@@ -19,6 +22,8 @@ import { MESSAGES } from "./const.js";
 
 let tasks = [];
 let isVisible;
+let currentFilter = "all";
+let filteredOrSearchAbleTasks = [];
 
 const addButtonHandler = (container) => {
   isVisible = !isVisible;
@@ -45,21 +50,37 @@ const createButtonHandler = () => {
 };
 
 const searchButtonHandler = () => {
-  const searchTitle = $searchInput.value.trim();
+  const searchTitle = $searchInput.value.trim().toLowerCase();
   const $overlay = showSpinnerOverlay($taskListContainer);
 
   setTimeout(() => {
+    filteredOrSearchAbleTasks = [...tasks];
+
     if (searchTitle) {
-      const filteredTasks = tasks.filter((task) =>
-        task.title.toLowerCase().includes(searchTitle.toLowerCase())
+      filteredOrSearchAbleTasks = filteredOrSearchAbleTasks.filter((task) =>
+        task.title.toLowerCase().includes(searchTitle)
       );
-      if (filteredTasks.length > 0) {
-        renderTasks(filteredTasks);
-      } else {
-        showToastMessage(MESSAGES.NO_TASKS_FOUND);
-      }
+    }
+
+    switch (currentFilter) {
+      case "incomplete":
+        filteredOrSearchAbleTasks = filteredOrSearchAbleTasks.filter(
+          (task) => !task.done
+        );
+        break;
+      case "complete":
+        filteredOrSearchAbleTasks = filteredOrSearchAbleTasks.filter(
+          (task) => task.done
+        );
+        break;
+      default:
+        break;
+    }
+
+    if (filteredOrSearchAbleTasks.length > 0) {
+      renderTasks(filteredOrSearchAbleTasks);
     } else {
-      renderTasks(tasks);
+      showToastMessage(MESSAGES.NO_TASKS_FOUND);
     }
 
     hideSpinnerOverlay($overlay);
@@ -160,3 +181,43 @@ document.addEventListener("DOMContentLoaded", function () {
 $noTask.addEventListener("click", createButtonHandler);
 $createButton.addEventListener("click", createButtonHandler);
 $searchButton.addEventListener("click", searchButtonHandler);
+
+$filterAllButton.addEventListener("click", () => {
+  currentFilter = "all";
+  filteredOrSearchAbleTasks = [...tasks];
+  filterTasks();
+});
+
+$filterIncompleteButton.addEventListener("click", () => {
+  currentFilter = "incomplete";
+  filterTasks();
+});
+
+$filterCompleteButton.addEventListener("click", () => {
+  currentFilter = "complete";
+  filterTasks();
+});
+
+const filterTasks = () => {
+  let filteredTasks = [...filteredOrSearchAbleTasks];
+
+  switch (currentFilter) {
+    case "incomplete":
+      filteredTasks = filteredTasks.filter((task) => !task.done);
+      break;
+    case "complete":
+      filteredTasks = filteredTasks.filter((task) => task.done);
+      break;
+    default:
+      break;
+  }
+
+  const searchTitle = $searchInput.value.trim().toLowerCase();
+  if (searchTitle) {
+    filteredTasks = filteredTasks.filter((task) =>
+      task.title.toLowerCase().includes(searchTitle)
+    );
+  }
+
+  renderTasks(filteredTasks);
+};
