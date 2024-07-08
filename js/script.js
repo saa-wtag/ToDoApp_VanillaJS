@@ -2,7 +2,7 @@ import { $taskInput, $addButton, $taskList } from "./elements.js";
 import {
   showToastMessage,
   sanitizeInput,
-  createElement,
+  createTaskElement,
   formatDate,
 } from "./utilities.js";
 
@@ -27,7 +27,6 @@ const createTask = (taskTitle) => {
     id: new Date().getTime(),
     title: taskTitle,
     createdAt: formatDate(new Date()),
-    deleteButton: createElement("Delete", "button", () => deleteTask(task.id)),
   };
   tasks.unshift(task);
 
@@ -40,11 +39,8 @@ const renderTasks = () => {
   $taskList.innerHTML = "";
 
   tasks.forEach((task) => {
-    const texts = [task.title, " Created at: " + task.createdAt];
-    const $tasksList = createElement(texts, "li");
-
-    $tasksList.appendChild(task.deleteButton);
-    $taskList.appendChild($tasksList);
+    const $taskElement = createTaskElement(task, deleteTask);
+    $taskList.appendChild($taskElement);
   });
 };
 
