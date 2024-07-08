@@ -29,10 +29,3 @@ export const formatDate = (now) => {
 
   return `${day},${month},${year}`;
 };
-
-export const handleInputChange = ($inputField, $updateButton, currentTask) => {
-  const trimmedValue = $inputField.value.trim();
-  $updateButton.disabled = !(
-    trimmedValue.length > 0 && trimmedValue !== currentTask.title
-  );
-};
