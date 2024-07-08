@@ -27,12 +27,10 @@ const createTask = (taskTitle) => {
     id: new Date().getTime(),
     title: taskTitle,
     createdAt: formatDate(new Date()),
-    deleteButton : createElement("Delete", "button", () =>
-      deleteTask(task.id)
-    )
+    deleteButton: createElement("Delete", "button", () => deleteTask(task.id)),
   };
   tasks.unshift(task);
-  
+
   renderTasks();
 
   $taskInput.value = "";
@@ -44,7 +42,7 @@ const renderTasks = () => {
   tasks.forEach((task) => {
     const texts = [task.title, " Created at: " + task.createdAt];
     const $tasksList = createElement(texts, "li");
-    
+
     $tasksList.appendChild(task.deleteButton);
     $taskList.appendChild($tasksList);
   });
