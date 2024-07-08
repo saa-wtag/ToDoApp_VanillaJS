@@ -14,7 +14,9 @@ const addButtonHandler = () => {
     createTask(taskTitle);
     showToastMessage("Task added successfully!");
     $addButton.disabled = true;
-  } else showToastMessage("Please provide a valid title!");
+  } else {
+    showToastMessage("Please provide a valid title!");
+  }
 };
 
 const deleteTask = (taskId) => {
@@ -30,7 +32,7 @@ const editHandler = (task) => {
 
 const updateHandler = (taskObj, newTitle) => {
   if (newTitle.trim().length > 0) {
-    task.title = newTitle.trim();
+    taskObj.title = newTitle.trim();
   }
   cancelEdit();
   renderTasks();
@@ -83,10 +85,15 @@ const renderTasks = () => {
 
       $tasksList.append($inputField, $updateButton, $cancelButton);
     } else {
-      const $deleteButton = createButton("Delete", () =>
-        deleteHandler(task.id)
+      const $deleteButton = createElement("Delete", "button", () =>
+        deleteTask(task.id)
       );
-      const $editButton = createButton("Edit", () => editHandler(task));
+      const $editButton = createElement("Edit", "button", () =>
+        editHandler(task)
+      );
+      const $doneButton = createElement("Done", "button", () =>
+        doneHandler(task.id)
+      );
 
       $tasksList.append($titleElement, $deleteButton);
       if (!task.done) {
