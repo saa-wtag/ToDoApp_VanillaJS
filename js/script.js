@@ -1,22 +1,23 @@
 import { $taskInput, $addButton, $taskList } from "./elements.js";
 import {
   showToastMessage,
-  handleInputChange,
-  createButton,
+  sanitizeInput,
+  createElement,
+  formatDate,
 } from "./utilities.js";
 
 let tasks = [];
 
 const addButtonHandler = () => {
-  const taskTitle = $taskInput.value.trim();
+  const taskTitle = sanitizeInput($taskInput.value);
   if (taskTitle) {
     createTask(taskTitle);
     showToastMessage("Task added successfully!");
     $addButton.disabled = true;
-  }
+  } else showToastMessage("Please provide a valid title!");
 };
 
-const deleteHandler = (taskId) => {
+const deleteTask = (taskId) => {
   tasks = tasks.filter((task) => task.id !== taskId);
   renderTasks();
 };
@@ -44,15 +45,16 @@ const doneHandler = (taskId) => {
 };
 
 const createTask = (taskTitle) => {
-  tasks.unshift({
+  const task = {
     id: new Date().getTime(),
     title: taskTitle,
-    done: false,
+    createdAt: formatDate(new Date()),
+    deleteButton: createElement("Delete", "button", () => deleteTask(task.id)),
     editMode: false,
-  });
+  };
+  tasks.unshift(task);
   renderTasks();
   $taskInput.value = "";
-  $addButton.disabled = true;
 };
 
 const renderTasks = () => {
@@ -70,10 +72,10 @@ const renderTasks = () => {
       $inputField.type = "text";
       $inputField.value = task.title;
 
-      const $updateButton = createButton("Update", () =>
+      const $updateButton = createElement("Update", "button", () =>
         updateHandler(task, $inputField.value)
       );
-      const $cancelButton = createButton("Cancel", cancelEdit);
+      const $cancelButton = createElement("Cancel", "button", cancelEdit);
 
       $inputField.addEventListener("input", () => {
         handleInputChange($inputField, $updateButton, task);
@@ -81,11 +83,15 @@ const renderTasks = () => {
 
       $tasksList.append($inputField, $updateButton, $cancelButton);
     } else {
-      const $deleteButton = createButton("Delete", () =>
-        deleteHandler(task.id)
+      const $deleteButton = createElement("Delete", "button", () =>
+        deleteTask(task.id)
       );
-      const $editButton = createButton("Edit", () => editHandler(task));
-      const $doneButton = createButton("Done", () => doneHandler(task.id));
+      const $editButton = createElement("Edit", "button", () =>
+        editHandler(task)
+      );
+      const $doneButton = createElement("Done", "button", () =>
+        doneHandler(task.id)
+      );
 
       $tasksList.append($titleElement, $deleteButton);
       if (!task.done) {
@@ -103,7 +109,11 @@ const cancelEdit = () => {
 };
 
 $taskInput.addEventListener("input", () => {
-  $addButton.disabled = !$taskInput.value.trim();
+  if ($taskInput.value.trim()) {
+    $addButton.disabled = false;
+  } else {
+    $addButton.disabled = true;
+  }
 });
 
 $addButton.addEventListener("click", addButtonHandler);
