@@ -18,20 +18,14 @@ export const handleInputChange = ($inputField, $updateButton, currentTask) => {
   );
 };
 
-export const toggleInputContainer = (
-  isVisible,
-  addButtonHandler,
-  $inputContainer,
-  $noTask,
-  tasksLength
-) => {
+export const toggleInputContainer = (isVisible, addButtonHandler) => {
   if (isVisible) {
     $taskListContainer.style.display = "grid";
-    let inputContainer = createContainerBuilder(addButtonHandler);
+    const inputContainer = createContainerBuilder(addButtonHandler);
     $taskListContainer.appendChild(inputContainer);
   } else {
-    $inputContainer = document.getElementById("input-container");
-    $inputContainer.remove();      
+    const inputContainer = document.getElementById("input-container");
+    if (inputContainer) inputContainer.remove();
   }
 };
 
@@ -68,7 +62,10 @@ export const createContainerBuilder = (addButtonHandler) => {
   addButton.classList.add("filters-button");
   addButton.id = "add-button";
   addButton.textContent = "Add Task";
-  addButton.addEventListener("click", addButtonHandler);
+  addButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    addButtonHandler(taskContainer);
+  });
 
   const deleteButton = document.createElement("button");
   deleteButton.classList.add("card-buttons");
@@ -80,7 +77,6 @@ export const createContainerBuilder = (addButtonHandler) => {
   deleteButton.addEventListener("click", () => {
     taskContainer.remove();
   });
-
   taskButtonsDiv.append(addButton, deleteButton);
   taskContainer.append(taskInputDiv, taskButtonsDiv);
 
@@ -117,7 +113,7 @@ export const containerBuilder = (
 
     taskButtons.prepend(
       createButton("delete-button", "./icons/delete-icon.svg", "Delete", () =>
-        deleteHandler(task.id)
+        deleteHandler(task.id, taskContainer)
       )
     );
   } else {
@@ -130,20 +126,20 @@ export const containerBuilder = (
     } else {
       taskButtons.append(
         createButton("save-button", null, "Save", () =>
-          updateHandler(task, content[0].value.trim())
+          updateHandler(task, taskContainer, content[0].value.trim())
         )
       );
     }
 
     taskButtons.append(
       createButton("done-button", "./icons/done-icon.svg", "Done", () =>
-        doneHandler(task.id)
+        doneHandler(task.id, taskContainer)
       )
     );
 
     taskButtons.append(
       createButton("delete-button", "./icons/delete-icon.svg", "Delete", () =>
-        deleteHandler(task.id)
+        deleteHandler(task.id, taskContainer)
       )
     );
   }
@@ -183,4 +179,37 @@ const calculateCompletionTime = (task) => {
   const timeDiff = Math.abs(completedDate - createdDate);
   const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
   return diffDays;
+};
+
+export const showSpinnerOverlay = (targetContainer) => {
+  const $overlay = document.createElement("div");
+  $overlay.style.position = "absolute";
+  $overlay.style.top = "0";
+  $overlay.style.left = "0";
+  $overlay.style.width = "100%";
+  $overlay.style.height = "100%";
+  $overlay.style.backgroundColor = "rgba(240, 240, 240, 0.4)";
+  $overlay.style.zIndex = "9999";
+  $overlay.style.display = "flex";
+  $overlay.style.justifyContent = "center";
+  $overlay.style.alignItems = "center";
+
+  const $spinnerImage = document.createElement("img");
+  $spinnerImage.src = "./icons/spinner-icon.svg";
+  $spinnerImage.alt = "Loading...";
+  $spinnerImage.style.width = "50px";
+  $spinnerImage.style.height = "50px";
+  $spinnerImage.style.borderRadius = "50%";
+  $spinnerImage.style.animation = "spin 1s linear infinite";
+
+  $overlay.appendChild($spinnerImage);
+  targetContainer.style.position = "relative";
+  targetContainer.appendChild($overlay);
+
+  return $overlay;
+};
+
+export const hideSpinnerOverlay = ($overlay) => {
+  const parent = $overlay.parentNode;
+  parent.removeChild($overlay);
 };

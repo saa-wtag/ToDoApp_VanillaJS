@@ -1,6 +1,5 @@
 import {
   $mainContainer,
-  $bodyContainer,
   $searchInput,
   $searchButton,
   $splash,
@@ -13,17 +12,23 @@ import {
   showToastMessage,
   toggleInputContainer,
   containerBuilder,
+  showSpinnerOverlay,
+  hideSpinnerOverlay,
 } from "./utilities.js";
 
 let tasks = [];
 let isVisible;
 
-const addButtonHandler = () => {
+const addButtonHandler = (container) => {
   isVisible = !isVisible;
   const taskTitle = document.getElementById("task-input").value.trim();
   if (taskTitle) {
-    createTask(taskTitle);
-    showToastMessage("√ Changes are saved successfully", true);
+    const $overlay = showSpinnerOverlay(container);
+    setTimeout(() => {
+      createTask(taskTitle);
+      showToastMessage("√ Changes are saved successfully", true);
+      hideSpinnerOverlay($overlay);
+    }, 1000);
   } else {
     showToastMessage("We couldn't save your changes", false);
   }
@@ -40,30 +45,7 @@ const createButtonHandler = () => {
 
 const searchButtonHandler = () => {
   const searchTitle = $searchInput.value.trim();
-
-  const $overlay = document.createElement("div");
-  $overlay.style.position = "absolute";
-  $overlay.style.top = "23%";
-  $overlay.style.left = "0";
-  $overlay.style.width = "100%";
-  $overlay.style.height = "77%";
-  $overlay.style.backgroundColor = "rgba(240, 240, 240, 0.4)";
-  $overlay.style.zIndex = "9999";
-  $overlay.style.display = "flex";
-  $overlay.style.justifyContent = "center";
-  $overlay.style.alignItems = "center";
-
-  const $spinnerImage = document.createElement("img");
-  $spinnerImage.src = "./icons/spinner-icon.svg";
-  $spinnerImage.alt = "Loading...";
-  $spinnerImage.style.width = "50px";
-  $spinnerImage.style.height = "50px";
-  $spinnerImage.style.borderRadius = "50%";
-  $spinnerImage.style.animation = "spin 1s linear infinite";
-
-  $overlay.appendChild($spinnerImage);
-
-  $bodyContainer.appendChild($overlay);
+  const $overlay = showSpinnerOverlay($taskListContainer);
 
   setTimeout(() => {
     if (searchTitle) {
@@ -79,15 +61,18 @@ const searchButtonHandler = () => {
       renderTasks(tasks);
     }
 
-    $bodyContainer.removeChild($overlay);
-
+    hideSpinnerOverlay($overlay);
     $searchInput.value = "";
-  }, 3000);
+  }, 1000);
 };
 
-const deleteHandler = (taskId) => {
-  tasks = tasks.filter((task) => task.id !== taskId);
-  renderTasks(tasks);
+const deleteHandler = (taskId, container) => {
+  const $overlay = showSpinnerOverlay(container);
+  setTimeout(() => {
+    tasks = tasks.filter((task) => task.id !== taskId);
+    renderTasks(tasks);
+    hideSpinnerOverlay($overlay);
+  }, 1000);
 };
 
 const editHandler = (task) => {
@@ -96,21 +81,29 @@ const editHandler = (task) => {
   renderTasks(tasks);
 };
 
-const updateHandler = (task, newTitle) => {
+const updateHandler = (task, container, newTitle) => {
   if (newTitle.length > 0) {
-    task.title = newTitle;
+    const $overlay = showSpinnerOverlay(container);
+    setTimeout(() => {
+      task.title = newTitle;
+      cancelEdit();
+      renderTasks(tasks);
+      hideSpinnerOverlay($overlay);
+    }, 1000);
   }
-  cancelEdit();
-  renderTasks(tasks);
 };
 
-const doneHandler = (taskId) => {
-  const task = tasks.find((task) => task.id === taskId);
-  if (task) {
-    task.done = !task.done;
-    cancelEdit();
-    renderTasks(tasks);
-  }
+const doneHandler = (taskId, container) => {
+  const $overlay = showSpinnerOverlay(container);
+  setTimeout(() => {
+    const task = tasks.find((task) => task.id === taskId);
+    if (task) {
+      task.done = !task.done;
+      cancelEdit();
+      renderTasks(tasks);
+    }
+    hideSpinnerOverlay($overlay);
+  }, 1000);
 };
 
 const createTask = (taskTitle) => {
