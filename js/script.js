@@ -30,9 +30,9 @@ const editHandler = (task) => {
   renderTasks();
 };
 
-const updateHandler = (taskObj, newTitle) => {
+const updateHandler = (task, newTitle) => {
   if (newTitle.trim().length > 0) {
-    taskObj.title = newTitle.trim();
+    task.title = newTitle.trim();
   }
   cancelEdit();
   renderTasks();
