@@ -68,10 +68,6 @@ const renderTasks = () => {
       );
       const $cancelButton = createElement("Cancel", "button", cancelEdit);
 
-      $inputField.addEventListener("input", () => {
-        handleInputChange($inputField, $updateButton, task);
-      });
-
       $tasksList.append($inputField, $updateButton, $cancelButton);
     } else {
       const $deleteButton = createElement("Delete", "button", () =>
