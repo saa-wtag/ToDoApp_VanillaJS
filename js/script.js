@@ -21,9 +21,11 @@ import {
 import { MESSAGES } from "./const.js";
 
 let tasks = [];
-let isVisible;
+let isVisible = false;
 let currentFilter = "all";
 let filteredOrSearchAbleTasks = [];
+let currentPage = 1;
+const tasksPerPage = 9;
 
 const addButtonHandler = (container) => {
   isVisible = !isVisible;
@@ -78,6 +80,7 @@ const searchButtonHandler = () => {
     }
 
     if (filteredOrSearchAbleTasks.length > 0) {
+      currentPage = 1;
       renderTasks(filteredOrSearchAbleTasks);
     } else {
       showToastMessage(MESSAGES.NO_TASKS_FOUND);
@@ -138,9 +141,14 @@ const createTask = (taskTitle) => {
   renderTasks(tasks);
 };
 
-const renderTasks = (tasks = []) => {
+const renderTasks = (tasksToRender) => {
   $taskListContainer.innerHTML = "";
-  tasks.forEach((task) => {
+
+  const start = (currentPage - 1) * tasksPerPage;
+  const end = currentPage * tasksPerPage;
+  const paginatedTasks = tasksToRender.slice(start, end);
+
+  paginatedTasks.forEach((task) => {
     containerBuilder(
       task,
       doneHandler,
@@ -150,12 +158,26 @@ const renderTasks = (tasks = []) => {
     );
   });
 
-  if (tasks.length === 0) {
+  if (tasksToRender.length === 0) {
     $noTask.style.display = "flex";
   } else {
     $noTask.style.display = "none";
   }
+
+  const totalTasks = tasksToRender.length;
+  if (totalTasks > end) {
+    $loadMore.style.display = "block";
+  } else {
+    $loadMore.style.display = "none";
+  }
 };
+
+$loadMore.addEventListener("click", () => {
+  currentPage++;
+  renderTasks(
+    filteredOrSearchAbleTasks.length ? filteredOrSearchAbleTasks : tasks
+  );
+});
 
 const renderNoTasks = () => {
   $taskListContainer.style.display = "none";
@@ -219,5 +241,6 @@ const filterTasks = () => {
     );
   }
 
+  currentPage = 1;
   renderTasks(filteredTasks);
 };
