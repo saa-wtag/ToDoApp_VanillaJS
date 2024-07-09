@@ -24,7 +24,7 @@ let tasks = [];
 let isVisible = false;
 let currentFilter = "all";
 let filteredOrSearchAbleTasks = [];
-let currentPage = 1;
+let tasksDisplayed = 0;
 const tasksPerPage = 9;
 
 const addButtonHandler = (container) => {
@@ -80,7 +80,7 @@ const searchButtonHandler = () => {
     }
 
     if (filteredOrSearchAbleTasks.length > 0) {
-      currentPage = 1;
+      tasksDisplayed = 0;
       renderTasks(filteredOrSearchAbleTasks);
     } else {
       showToastMessage(MESSAGES.NO_TASKS_FOUND);
@@ -138,15 +138,19 @@ const createTask = (taskTitle) => {
     done: false,
     editMode: false,
   });
+  tasksDisplayed = 0;
   renderTasks(tasks);
 };
 
 const renderTasks = (tasksToRender) => {
-  $taskListContainer.innerHTML = "";
+  if (tasksDisplayed === 0) {
+    $taskListContainer.innerHTML = "";
+  }
 
-  const start = (currentPage - 1) * tasksPerPage;
-  const end = currentPage * tasksPerPage;
-  const paginatedTasks = tasksToRender.slice(start, end);
+  const paginatedTasks = tasksToRender.slice(
+    tasksDisplayed,
+    tasksDisplayed + tasksPerPage
+  );
 
   paginatedTasks.forEach((task) => {
     containerBuilder(
@@ -158,14 +162,15 @@ const renderTasks = (tasksToRender) => {
     );
   });
 
+  tasksDisplayed += paginatedTasks.length;
+
   if (tasksToRender.length === 0) {
     $noTask.style.display = "flex";
   } else {
     $noTask.style.display = "none";
   }
 
-  const totalTasks = tasksToRender.length;
-  if (totalTasks > end) {
+  if (tasksToRender.length > tasksDisplayed) {
     $loadMore.style.display = "block";
   } else {
     $loadMore.style.display = "none";
@@ -173,7 +178,6 @@ const renderTasks = (tasksToRender) => {
 };
 
 $loadMore.addEventListener("click", () => {
-  currentPage++;
   renderTasks(
     filteredOrSearchAbleTasks.length ? filteredOrSearchAbleTasks : tasks
   );
@@ -241,6 +245,6 @@ const filterTasks = () => {
     );
   }
 
-  currentPage = 1;
+  tasksDisplayed = 0;
   renderTasks(filteredTasks);
 };

@@ -22,6 +22,7 @@ export const TASK_CONTAINER_CLASSES = ["task-container"];
 export const FILTER_BUTTON_CLASSES = ["filters-button"];
 export const CARD_BUTTON_CLASSES = ["card-buttons"];
 export const TASK_TITLE_CLASSES = ["task-title"];
+export const TASK_PER_PAGE = 9;
 
 export const OVERLAY_STYLES = {
   position: "absolute",
