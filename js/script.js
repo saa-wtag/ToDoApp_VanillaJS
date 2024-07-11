@@ -4,6 +4,7 @@ import {
   sanitizeInput,
   createElement,
   formatDate,
+  createTaskElement,
 } from "./utilities.js";
 
 let tasks = [];
@@ -24,13 +25,13 @@ const deleteTask = (taskId) => {
   renderTasks();
 };
 
-const editHandler = (task) => {
+const editTask = (task) => {
   cancelEdit();
   task.editMode = true;
   renderTasks();
 };
 
-const updateHandler = (task, newTitle) => {
+const updateTask = (task, newTitle) => {
   if (newTitle.trim().length > 0) {
     task.title = newTitle.trim();
   }
@@ -38,7 +39,7 @@ const updateHandler = (task, newTitle) => {
   renderTasks();
 };
 
-const doneHandler = (taskId) => {
+const doneTask = (taskId) => {
   const task = tasks.find((task) => task.id === taskId);
   if (task) {
     task.done = !task.done;
@@ -61,43 +62,17 @@ const createTask = (taskTitle) => {
 
 const renderTasks = () => {
   $taskList.innerHTML = "";
+
   tasks.forEach((task) => {
-    const $tasksList = document.createElement("li");
-    const $titleElement = document.createElement("span");
-    $titleElement.textContent = task.title;
-    if (task.done) {
-      $titleElement.style.textDecoration = "line-through";
-    }
-
-    if (task.editMode) {
-      const $inputField = document.createElement("input");
-      $inputField.type = "text";
-      $inputField.value = task.title;
-
-      const $updateButton = createElement("Update", "button", () =>
-        updateHandler(task, $inputField.value)
-      );
-      const $cancelButton = createElement("Cancel", "button", cancelEdit);
-
-      $tasksList.append($inputField, $updateButton, $cancelButton);
-    } else {
-      const $deleteButton = createElement("Delete", "button", () =>
-        deleteTask(task.id)
-      );
-      const $editButton = createElement("Edit", "button", () =>
-        editHandler(task)
-      );
-      const $doneButton = createElement("Done", "button", () =>
-        doneHandler(task.id)
-      );
-
-      $tasksList.append($titleElement, $deleteButton);
-      if (!task.done) {
-        $tasksList.append($editButton, $doneButton);
-      }
-    }
-
-    $taskList.appendChild($tasksList);
+    const $taskElement = createTaskElement(
+      task,
+      deleteTask,
+      editTask,
+      updateTask,
+      cancelEdit,
+      doneTask
+    );
+    $taskList.appendChild($taskElement);
   });
 };
 
