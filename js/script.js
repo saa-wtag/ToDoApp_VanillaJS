@@ -26,7 +26,7 @@ const addButtonHandler = () => {
 };
 
 const searchButtonHandler = () => {
-  const searchTitle = $searchInput.value.trim();
+  const searchTitle = sanitizeInput($searchInput.value);
 
   if (searchTitle) {
     const filteredTasks = tasks.filter((task) =>
