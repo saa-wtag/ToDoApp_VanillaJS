@@ -10,6 +10,7 @@ import {
 } from "./elements.js";
 import {
   showToastMessage,
+  sanitizeInput,
   toggleInputContainer,
   containerBuilder,
   showSpinnerOverlay,
@@ -22,7 +23,7 @@ let isVisible;
 
 const addButtonHandler = (container) => {
   isVisible = !isVisible;
-  const taskTitle = document.getElementById("task-input").value.trim();
+  const taskTitle = sanitizeInput(document.getElementById("task-input").value);
   if (taskTitle) {
     const $overlay = showSpinnerOverlay(container);
     setTimeout(() => {
@@ -45,7 +46,7 @@ const createButtonHandler = () => {
 };
 
 const searchButtonHandler = () => {
-  const searchTitle = $searchInput.value.trim();
+  const searchTitle = sanitizeInput($searchInput.value);
   const $overlay = showSpinnerOverlay($taskListContainer);
 
   setTimeout(() => {
@@ -108,12 +109,12 @@ const doneTask = (taskId, container) => {
 };
 
 const createTask = (taskTitle) => {
-  tasks.unshift({
+  const task = {
     id: new Date().getTime(),
     title: taskTitle,
-    done: false,
-    editMode: false,
-  });
+    createdAt: formatDate(new Date()),
+  };
+  tasks.unshift(task);
   renderTasks(tasks);
 };
 
@@ -136,7 +137,7 @@ const renderNoTasks = () => {
 };
 
 const cancelEdit = () => {
-  tasks.forEach((task) => (task.editMode = false));
+  tasks.forEach((task) => (task.isEditing = false));
   renderTasks(tasks);
 };
 
