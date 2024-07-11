@@ -38,10 +38,10 @@ const updateTask = (task, newTitle) => {
   renderTasks();
 };
 
-const doneTask = (taskId) => {
+const completeTask = (taskId) => {
   const task = tasks.find((task) => task.id === taskId);
   if (task) {
-    task.done = !task.done;
+    task.done = true;
     renderTasks();
   }
 };
@@ -67,7 +67,7 @@ const renderTasks = () => {
       editTask,
       updateTask,
       cancelEdit,
-      doneTask
+      completeTask
     );
     $taskList.appendChild($taskElement);
   });
