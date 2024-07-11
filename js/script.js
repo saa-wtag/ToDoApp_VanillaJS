@@ -67,7 +67,7 @@ const searchButtonHandler = () => {
   }, 1000);
 };
 
-const deleteHandler = (taskId, container) => {
+const deleteTask = (taskId, container) => {
   const $overlay = showSpinnerOverlay(container);
   setTimeout(() => {
     tasks = tasks.filter((task) => task.id !== taskId);
@@ -76,13 +76,13 @@ const deleteHandler = (taskId, container) => {
   }, 1000);
 };
 
-const editHandler = (task) => {
+const editTask = (task) => {
   cancelEdit();
   task.editMode = true;
   renderTasks(tasks);
 };
 
-const updateHandler = (task, container, newTitle) => {
+const updateTask = (task, container, newTitle) => {
   if (newTitle.length > 0) {
     const $overlay = showSpinnerOverlay(container);
     setTimeout(() => {
@@ -94,7 +94,7 @@ const updateHandler = (task, container, newTitle) => {
   }
 };
 
-const doneHandler = (taskId, container) => {
+const doneTask = (taskId, container) => {
   const $overlay = showSpinnerOverlay(container);
   setTimeout(() => {
     const task = tasks.find((task) => task.id === taskId);
@@ -120,13 +120,7 @@ const createTask = (taskTitle) => {
 const renderTasks = (tasks = []) => {
   $taskListContainer.innerHTML = "";
   tasks.forEach((task) => {
-    containerBuilder(
-      task,
-      doneHandler,
-      editHandler,
-      deleteHandler,
-      updateHandler
-    );
+    containerBuilder(task, doneTask, editTask, deleteTask, updateTask);
   });
 
   if (tasks.length === 0) {

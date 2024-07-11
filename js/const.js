@@ -22,23 +22,3 @@ export const TASK_CONTAINER_CLASSES = ["task-container"];
 export const FILTER_BUTTON_CLASSES = ["filters-button"];
 export const CARD_BUTTON_CLASSES = ["card-buttons"];
 export const TASK_TITLE_CLASSES = ["task-title"];
-
-export const OVERLAY_STYLES = {
-  position: "absolute",
-  top: "0",
-  left: "0",
-  width: "100%",
-  height: "100%",
-  backgroundColor: "rgba(240, 240, 240, 0.4)",
-  zIndex: "9999",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-};
-
-export const SPINNER_STYLES = {
-  width: "50px",
-  height: "50px",
-  borderRadius: "50%",
-  animation: "spin 1s linear infinite",
-};
