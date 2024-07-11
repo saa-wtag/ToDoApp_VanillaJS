@@ -62,10 +62,10 @@ const updateTask = (task, newTitle) => {
   renderTasks(tasks);
 };
 
-const doneTask = (taskId) => {
+const completeTask = (taskId) => {
   const task = tasks.find((task) => task.id === taskId);
   if (task) {
-    task.done = !task.done;
+    task.done = true;
     renderTasks(tasks);
   }
 };
@@ -91,7 +91,7 @@ const renderTasks = (tasks = []) => {
       editTask,
       updateTask,
       cancelEdit,
-      doneTask
+      completeTask
     );
     $taskList.appendChild($taskElement);
   });

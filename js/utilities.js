@@ -28,7 +28,7 @@ export const createTaskElement = (
   editTask,
   updateTask,
   cancelEdit,
-  doneTask
+  completeTask
 ) => {
   const $taskItem = document.createElement("li");
 
@@ -58,7 +58,7 @@ export const createTaskElement = (
     );
     const $editButton = createElement("Edit", "button", () => editTask(task));
     const $doneButton = createElement("Done", "button", () =>
-      doneTask(task.id)
+      completeTask(task.id)
     );
 
     $taskItem.append($titleElement, $deleteButton);
