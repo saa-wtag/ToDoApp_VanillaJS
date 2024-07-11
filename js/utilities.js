@@ -38,7 +38,7 @@ export const createTaskElement = (
     $titleElement.style.textDecoration = "line-through";
   }
 
-  if (task.editMode) {
+  if (task.isEditing) {
     const $inputField = document.createElement("input");
     $inputField.type = "text";
     $inputField.value = task.title;

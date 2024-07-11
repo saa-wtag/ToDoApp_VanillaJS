@@ -2,7 +2,6 @@ import { $taskInput, $addButton, $taskList } from "./elements.js";
 import {
   showToastMessage,
   sanitizeInput,
-  createTaskElement,
   formatDate,
   createTaskElement,
 } from "./utilities.js";
@@ -67,7 +66,8 @@ const renderTasks = () => {
       deleteTask,
       editTask,
       updateTask,
-      cancelEdit
+      cancelEdit,
+      doneTask
     );
     $taskList.appendChild($taskElement);
   });
