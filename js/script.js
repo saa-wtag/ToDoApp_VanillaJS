@@ -13,10 +13,12 @@ import {
 } from "./elements.js";
 import {
   showToastMessage,
+  sanitizeInput,
   toggleInputContainer,
   containerBuilder,
   showSpinnerOverlay,
   hideSpinnerOverlay,
+  formatDate,
   setActiveButton,
 } from "./utilities.js";
 import { MESSAGES } from "./const.js";
@@ -30,7 +32,8 @@ const tasksPerPage = 9;
 
 const addButtonHandler = (container) => {
   isVisible = !isVisible;
-  const taskTitle = document.getElementById("task-input").value.trim();
+  const taskTitle = sanitizeInput(document.getElementById("task-input").value);
+
   if (taskTitle) {
     const overlay = showSpinnerOverlay(container);
     setTimeout(() => {
@@ -56,7 +59,7 @@ const createButtonHandler = () => {
 };
 
 const searchButtonHandler = () => {
-  const searchTitle = $searchInput.value.trim().toLowerCase();
+  const searchTitle = sanitizeInput($searchInput.value).toLowerCase();
   const overlay = showSpinnerOverlay($taskListContainer);
 
   setTimeout(() => {
@@ -95,7 +98,7 @@ const searchButtonHandler = () => {
   }, 1000);
 };
 
-const deleteHandler = (taskId, container) => {
+const deleteTask = (taskId, container) => {
   const overlay = showSpinnerOverlay(container);
   setTimeout(() => {
     const index = tasks.findIndex((task) => task.id === taskId);
@@ -108,7 +111,7 @@ const deleteHandler = (taskId, container) => {
   }, 1000);
 };
 
-const editHandler = (task) => {
+const editTask = (task) => {
   cancelEdit();
   task.editMode = true;
   renderTasks(
@@ -116,8 +119,8 @@ const editHandler = (task) => {
   );
 };
 
-const updateHandler = (task, container, newTitle) => {
-  if (newTitle.length > 0) {
+const updateTask = (task, container, newTitle) => {
+  if (newTitle) {
     const overlay = showSpinnerOverlay(container);
     setTimeout(() => {
       task.title = newTitle;
@@ -128,7 +131,7 @@ const updateHandler = (task, container, newTitle) => {
   }
 };
 
-const doneHandler = (taskId, container) => {
+const doneTask = (taskId, container) => {
   const overlay = showSpinnerOverlay(container);
   setTimeout(() => {
     const task = tasks.find((task) => task.id === taskId);
@@ -141,12 +144,14 @@ const doneHandler = (taskId, container) => {
 };
 
 const createTask = (taskTitle) => {
-  tasks.unshift({
+  const task = {
     id: new Date().getTime(),
     title: taskTitle,
-    done: false,
+    createdAt: formatDate(new Date()),
     editMode: false,
-  });
+    done: false,
+  };
+  tasks.unshift(task);
   tasksDisplayed = Math.min(tasksPerPage, tasks.length);
   filterTasks();
 };
@@ -157,13 +162,7 @@ const renderTasks = (tasksToRender) => {
   const paginatedTasks = tasksToRender.slice(0, tasksDisplayed);
 
   paginatedTasks.forEach((task) => {
-    containerBuilder(
-      task,
-      doneHandler,
-      editHandler,
-      deleteHandler,
-      updateHandler
-    );
+    containerBuilder(task, doneTask, editTask, deleteTask, updateTask);
   });
 
   if (tasksToRender.length === 0) {
