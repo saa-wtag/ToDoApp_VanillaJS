@@ -48,7 +48,10 @@ const createButtonHandler = () => {
   $noTask.style.display = "none";
 
   toggleInputContainer(isVisible, addButtonHandler);
-  if (!isVisible) renderTasks(tasks);
+  if (!isVisible)
+    renderTasks(
+      filteredOrSearchAbleTasks.length ? filteredOrSearchAbleTasks : tasks
+    );
 };
 
 const searchButtonHandler = () => {
@@ -80,7 +83,7 @@ const searchButtonHandler = () => {
     }
 
     if (filteredOrSearchAbleTasks.length > 0) {
-      tasksDisplayed = 0;
+      tasksDisplayed = Math.min(tasksPerPage, filteredOrSearchAbleTasks.length);
       renderTasks(filteredOrSearchAbleTasks);
     } else {
       showToastMessage(MESSAGES.NO_TASKS_FOUND);
@@ -94,8 +97,12 @@ const searchButtonHandler = () => {
 const deleteHandler = (taskId, container) => {
   const $overlay = showSpinnerOverlay(container);
   setTimeout(() => {
-    tasks = tasks.filter((task) => task.id !== taskId);
-    renderTasks(tasks);
+    const index = tasks.findIndex((task) => task.id === taskId);
+    if (index !== -1) {
+      tasks.splice(index, 1);
+      tasksDisplayed = Math.max(0, tasksDisplayed - 1);
+    }
+    filterTasks();
     hideSpinnerOverlay($overlay);
   }, 1000);
 };
@@ -103,7 +110,9 @@ const deleteHandler = (taskId, container) => {
 const editHandler = (task) => {
   cancelEdit();
   task.editMode = true;
-  renderTasks(tasks);
+  renderTasks(
+    filteredOrSearchAbleTasks.length ? filteredOrSearchAbleTasks : tasks
+  );
 };
 
 const updateHandler = (task, container, newTitle) => {
@@ -111,8 +120,8 @@ const updateHandler = (task, container, newTitle) => {
     const $overlay = showSpinnerOverlay(container);
     setTimeout(() => {
       task.title = newTitle;
-      cancelEdit();
-      renderTasks(tasks);
+      task.editMode = false;
+      filterTasks();
       hideSpinnerOverlay($overlay);
     }, 1000);
   }
@@ -124,8 +133,7 @@ const doneHandler = (taskId, container) => {
     const task = tasks.find((task) => task.id === taskId);
     if (task) {
       task.done = !task.done;
-      cancelEdit();
-      renderTasks(tasks);
+      filterTasks();
     }
     hideSpinnerOverlay($overlay);
   }, 1000);
@@ -138,19 +146,14 @@ const createTask = (taskTitle) => {
     done: false,
     editMode: false,
   });
-  tasksDisplayed = 0;
-  renderTasks(tasks);
+  tasksDisplayed = Math.min(tasksPerPage, tasks.length);
+  filterTasks();
 };
 
 const renderTasks = (tasksToRender) => {
-  if (tasksDisplayed === 0) {
-    $taskListContainer.innerHTML = "";
-  }
+  $taskListContainer.innerHTML = "";
 
-  const paginatedTasks = tasksToRender.slice(
-    tasksDisplayed,
-    tasksDisplayed + tasksPerPage
-  );
+  const paginatedTasks = tasksToRender.slice(0, tasksDisplayed);
 
   paginatedTasks.forEach((task) => {
     containerBuilder(
@@ -161,8 +164,6 @@ const renderTasks = (tasksToRender) => {
       updateHandler
     );
   });
-
-  tasksDisplayed += paginatedTasks.length;
 
   if (tasksToRender.length === 0) {
     $noTask.style.display = "flex";
@@ -178,6 +179,10 @@ const renderTasks = (tasksToRender) => {
 };
 
 $loadMore.addEventListener("click", () => {
+  tasksDisplayed = Math.min(
+    tasksDisplayed + tasksPerPage,
+    filteredOrSearchAbleTasks.length || tasks.length
+  );
   renderTasks(
     filteredOrSearchAbleTasks.length ? filteredOrSearchAbleTasks : tasks
   );
@@ -190,7 +195,9 @@ const renderNoTasks = () => {
 
 const cancelEdit = () => {
   tasks.forEach((task) => (task.editMode = false));
-  renderTasks(tasks);
+  renderTasks(
+    filteredOrSearchAbleTasks.length ? filteredOrSearchAbleTasks : tasks
+  );
 };
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -210,7 +217,6 @@ $searchButton.addEventListener("click", searchButtonHandler);
 
 $filterAllButton.addEventListener("click", () => {
   currentFilter = "all";
-  filteredOrSearchAbleTasks = [...tasks];
   filterTasks();
 });
 
@@ -225,7 +231,7 @@ $filterCompleteButton.addEventListener("click", () => {
 });
 
 const filterTasks = () => {
-  let filteredTasks = [...filteredOrSearchAbleTasks];
+  let filteredTasks = [...tasks];
 
   switch (currentFilter) {
     case "incomplete":
@@ -245,6 +251,7 @@ const filterTasks = () => {
     );
   }
 
-  tasksDisplayed = 0;
+  filteredOrSearchAbleTasks = filteredTasks;
+  tasksDisplayed = Math.min(tasksDisplayed, filteredTasks.length);
   renderTasks(filteredTasks);
 };
