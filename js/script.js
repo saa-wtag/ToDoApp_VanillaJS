@@ -24,15 +24,15 @@ const deleteTask = (taskId) => {
   renderTasks();
 };
 
-const editHandler = (task) => {
+const editTask = (task) => {
   cancelEdit();
-  task.editMode = true;
+  task.isEditing = true;
   renderTasks();
 };
 
-const updateHandler = (task, newTitle) => {
-  if (newTitle.trim().length > 0) {
-    task.title = newTitle.trim();
+const updateTask = (task, newTitle) => {
+  if (newTitle) {
+    task.title = newTitle;
   }
   cancelEdit();
   renderTasks();
@@ -56,8 +56,8 @@ const renderTasks = () => {
     const $taskElement = createTaskElement(
       task,
       deleteTask,
-      editHandler,
-      updateHandler,
+      editTask,
+      updateTask,
       cancelEdit
     );
     $taskList.appendChild($taskElement);
@@ -65,7 +65,7 @@ const renderTasks = () => {
 };
 
 const cancelEdit = () => {
-  tasks.forEach((task) => (task.editMode = false));
+  tasks.forEach((task) => (task.isEditing = false));
   renderTasks();
 };
 
