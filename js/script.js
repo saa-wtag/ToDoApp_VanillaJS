@@ -113,7 +113,7 @@ const deleteTask = (taskId, container) => {
 
 const editTask = (task) => {
   cancelEdit();
-  task.editMode = true;
+  task.isEditting = true;
   renderTasks(
     filteredOrSearchAbleTasks.length ? filteredOrSearchAbleTasks : tasks
   );
@@ -124,19 +124,19 @@ const updateTask = (task, container, newTitle) => {
     const overlay = showSpinnerOverlay(container);
     setTimeout(() => {
       task.title = newTitle;
-      task.editMode = false;
+      task.isEditting = false;
       filterTasks();
       hideSpinnerOverlay(overlay);
     }, 1000);
   }
 };
 
-const doneTask = (taskId, container) => {
+const completeTask = (taskId, container) => {
   const overlay = showSpinnerOverlay(container);
   setTimeout(() => {
     const task = tasks.find((task) => task.id === taskId);
     if (task) {
-      task.done = !task.done;
+      task.done = false;
       filterTasks();
     }
     hideSpinnerOverlay(overlay);
@@ -148,7 +148,7 @@ const createTask = (taskTitle) => {
     id: new Date().getTime(),
     title: taskTitle,
     createdAt: formatDate(new Date()),
-    editMode: false,
+    isEditting: false,
     done: false,
   };
   tasks.unshift(task);
@@ -162,7 +162,7 @@ const renderTasks = (tasksToRender) => {
   const paginatedTasks = tasksToRender.slice(0, tasksDisplayed);
 
   paginatedTasks.forEach((task) => {
-    containerBuilder(task, doneTask, editTask, deleteTask, updateTask);
+    containerBuilder(task, completeTask, editTask, deleteTask, updateTask);
   });
 
   if (tasksToRender.length === 0) {
@@ -194,7 +194,7 @@ const renderNoTasks = () => {
 };
 
 const cancelEdit = () => {
-  tasks.forEach((task) => (task.editMode = false));
+  tasks.forEach((task) => (task.isEditting = false));
   renderTasks(
     filteredOrSearchAbleTasks.length ? filteredOrSearchAbleTasks : tasks
   );
