@@ -13,22 +13,24 @@ import {
 } from "./elements.js";
 import {
   showToastMessage,
+  sanitizeInput,
   toggleInputContainer,
   containerBuilder,
   showSpinnerOverlay,
   hideSpinnerOverlay,
-  setActiveButton,
+  formatDate,
 } from "./utilities.js";
 import { MESSAGES } from "./const.js";
 
 let tasks = [];
-let isVisible;
+let isVisible = false; 
 let currentFilter = "all";
 let filteredOrSearchAbleTasks = [];
 
 const addButtonHandler = (container) => {
   isVisible = !isVisible;
-  const taskTitle = document.getElementById("task-input").value.trim();
+  const taskTitle = sanitizeInput(document.getElementById("task-input").value);
+
   if (taskTitle) {
     const overlay = showSpinnerOverlay(container);
     setTimeout(() => {
@@ -51,7 +53,7 @@ const createButtonHandler = () => {
 };
 
 const searchButtonHandler = () => {
-  const searchTitle = $searchInput.value.trim().toLowerCase();
+  const searchTitle = sanitizeInput($searchInput.value).toLowerCase();
   const overlay = showSpinnerOverlay($taskListContainer);
 
   setTimeout(() => {
@@ -89,7 +91,7 @@ const searchButtonHandler = () => {
   }, 1000);
 };
 
-const deleteHandler = (taskId, container) => {
+const deleteTask = (taskId, container) => {
   const overlay = showSpinnerOverlay(container);
   setTimeout(() => {
     tasks = tasks.filter((task) => task.id !== taskId);
@@ -98,60 +100,55 @@ const deleteHandler = (taskId, container) => {
   }, 1000);
 };
 
-const editHandler = (task) => {
+const editTask = (task) => {
   cancelEdit();
   task.editMode = true;
   renderTasks(tasks);
 };
 
-const updateHandler = (task, container, newTitle) => {
-  if (newTitle.length > 0) {
+const updateTask = (task, container, newTitle) => {
+  if (newTitle) {
     const overlay = showSpinnerOverlay(container);
     setTimeout(() => {
       task.title = newTitle;
-      cancelEdit();
+      task.editMode = false;
       renderTasks(tasks);
       hideSpinnerOverlay(overlay);
     }, 1000);
   }
 };
 
-const doneHandler = (taskId, container) => {
+const doneTask = (taskId, container) => {
   const overlay = showSpinnerOverlay(container);
   setTimeout(() => {
     const task = tasks.find((task) => task.id === taskId);
     if (task) {
       task.done = !task.done;
-      cancelEdit();
-      renderTasks(tasks);
+      renderTasks(tasks); // No need to call cancelEdit here
     }
     hideSpinnerOverlay(overlay);
   }, 1000);
 };
 
 const createTask = (taskTitle) => {
-  tasks.unshift({
+  const task = {
     id: new Date().getTime(),
     title: taskTitle,
-    done: false,
-    editMode: false,
-  });
+    createdAt: formatDate(new Date()),
+    editMode: false, // Ensure edit mode is false initially
+    done: false, // Ensure task is not marked as done initially
+  };
+  tasks.unshift(task);
   renderTasks(tasks);
 };
 
-const renderTasks = (tasks = []) => {
+const renderTasks = (tasksToRender = tasks) => {
   $taskListContainer.innerHTML = "";
-  tasks.forEach((task) => {
-    containerBuilder(
-      task,
-      doneHandler,
-      editHandler,
-      deleteHandler,
-      updateHandler
-    );
+  tasksToRender.forEach((task) => {
+    containerBuilder(task, doneTask, editTask, deleteTask, updateTask);
   });
 
-  if (tasks.length === 0) {
+  if (tasksToRender.length === 0) {
     $noTask.style.display = "flex";
   } else {
     $noTask.style.display = "none";

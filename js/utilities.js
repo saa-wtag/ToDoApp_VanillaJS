@@ -20,17 +20,21 @@ export const showToastMessage = (message, isSuccess) => {
   }, 1500);
 };
 
-export const handleInputChange = ($inputField, $updateButton, currentTask) => {
-  const trimmedValue = $inputField.value.trim();
-  $updateButton.disabled = !(
-    trimmedValue.length > 0 && trimmedValue !== currentTask.title
-  );
+export const sanitizeInput = (value) => {
+  const reg = /[&<>"'/`]/gi;
+  return value.replace(reg, "").trim();
+};
+
+const createElement = (type, classes = []) => {
+  const element = document.createElement(type);
+  if (classes.length > 0) element.classList.add(...classes);
+  return element;
 };
 
 export const toggleInputContainer = (isVisible, addButtonHandler) => {
   if (isVisible) {
     $taskListContainer.style.display = "grid";
-    const inputContainer = createContainerBuilder(addButtonHandler);
+    const inputContainer = createTaskElement(addButtonHandler);
     $taskListContainer.appendChild(inputContainer);
   } else {
     const inputContainer = document.getElementById("input-container");
@@ -54,7 +58,7 @@ const createButton = (id, imgSrc, alt, handler) => {
   return button;
 };
 
-export const createContainerBuilder = (addButtonHandler) => {
+export const createTaskElement = (addButtonHandler) => {
   const taskContainer = document.createElement("div");
   taskContainer.classList.add(...TASK_CONTAINER_CLASSES);
   taskContainer.id = "input-container";
@@ -76,16 +80,13 @@ export const createContainerBuilder = (addButtonHandler) => {
     addButtonHandler(taskContainer);
   });
 
-  const deleteButton = document.createElement("button");
-  deleteButton.classList.add(...CARD_BUTTON_CLASSES);
-  deleteButton.id = "delete-button";
-  const deleteImg = document.createElement("img");
-  deleteImg.src = ICONS.DELETE;
-  deleteImg.alt = "Delete";
-  deleteButton.appendChild(deleteImg);
-  deleteButton.addEventListener("click", () => {
-    taskContainer.remove();
-  });
+  const deleteButton = createButton(
+    "delete-button",
+    ICONS.DELETE,
+    "Delete",
+    () => taskContainer.remove()
+  );
+
   taskButtonsDiv.append(addButton, deleteButton);
   taskContainer.append(taskInputDiv, taskButtonsDiv);
 
@@ -94,10 +95,10 @@ export const createContainerBuilder = (addButtonHandler) => {
 
 export const containerBuilder = (
   task,
-  doneHandler,
-  editHandler,
-  deleteHandler,
-  updateHandler
+  doneTask,
+  editTask,
+  deleteTask,
+  updateTask
 ) => {
   const taskContainer = createElement("div", TASK_CONTAINER_CLASSES);
   taskContainer.id = task.done ? "done-task-unit" : "remaining-task-unit";
@@ -122,42 +123,36 @@ export const containerBuilder = (
 
     taskButtons.prepend(
       createButton("delete-button", ICONS.DELETE, "Delete", () =>
-        deleteHandler(task.id, taskContainer)
+        deleteTask(task.id, taskContainer)
       )
     );
   } else {
     if (!task.editMode) {
       taskButtons.append(
-        createButton("edit-button", ICONS.EDIT, "Edit", () => editHandler(task))
+        createButton("edit-button", ICONS.EDIT, "Edit", () => editTask(task))
       );
     } else {
       taskButtons.append(
         createButton("save-button", null, "Save", () =>
-          updateHandler(task, taskContainer, content[0].value.trim())
+          updateTask(task, taskContainer, content[0].value.trim())
         )
       );
     }
 
     taskButtons.append(
       createButton("done-button", ICONS.DONE, "Done", () =>
-        doneHandler(task.id, taskContainer)
+        doneTask(task.id, taskContainer)
       )
     );
 
     taskButtons.append(
       createButton("delete-button", ICONS.DELETE, "Delete", () =>
-        deleteHandler(task.id, taskContainer)
+        deleteTask(task.id, taskContainer)
       )
     );
   }
 
   $taskListContainer.appendChild(taskContainer);
-};
-
-const createElement = (type, classes = []) => {
-  const element = document.createElement(type);
-  if (classes.length > 0) element.classList.add(...classes);
-  return element;
 };
 
 const buildEditModeContent = (task) => {
@@ -174,9 +169,7 @@ const buildNormalModeContent = (task) => {
 
   const createdAt = createElement("p");
   createdAt.id = "task-created-at";
-  createdAt.textContent = `Created At: ${
-    task.createdAt || new Date().toLocaleDateString()
-  }`;
+  createdAt.textContent = `Created At: ${formatDate(task.id)}`;
   return [taskTitle, createdAt];
 };
 
@@ -186,6 +179,14 @@ const calculateCompletionTime = (task) => {
   const timeDiff = Math.abs(completedDate - createdDate);
   const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
   return diffDays;
+};
+
+export const formatDate = (createdAt) => {
+  const date = new Date(createdAt);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = String(date.getFullYear()).slice(-2);
+  return `${day}.${month}.${year}`;
 };
 
 export const showSpinnerOverlay = (targetContainer) => {
