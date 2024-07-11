@@ -136,7 +136,7 @@ const completeTask = (taskId, container) => {
   setTimeout(() => {
     const task = tasks.find((task) => task.id === taskId);
     if (task) {
-      task.done = false;
+      task.done = true;
       filterTasks();
     }
     hideSpinnerOverlay(overlay);
