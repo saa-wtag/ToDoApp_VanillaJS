@@ -2,7 +2,7 @@ import { $taskInput, $addButton, $taskList } from "./elements.js";
 import {
   showToastMessage,
   sanitizeInput,
-  createElement,
+  createTaskElement,
   formatDate,
 } from "./utilities.js";
 
@@ -43,8 +43,6 @@ const createTask = (taskTitle) => {
     id: new Date().getTime(),
     title: taskTitle,
     createdAt: formatDate(new Date()),
-    deleteButton: createElement("Delete", "button", () => deleteTask(task.id)),
-    editMode: false,
   };
   tasks.unshift(task);
   renderTasks();
@@ -53,34 +51,16 @@ const createTask = (taskTitle) => {
 
 const renderTasks = () => {
   $taskList.innerHTML = "";
+
   tasks.forEach((task) => {
-    const $tasksList = document.createElement("li");
-    const $titleElement = document.createElement("span");
-    $titleElement.textContent = task.title;
-
-    if (task.editMode) {
-      const $inputField = document.createElement("input");
-      $inputField.type = "text";
-      $inputField.value = task.title;
-
-      const $updateButton = createElement("Update", "button", () =>
-        updateHandler(task, $inputField.value)
-      );
-      const $cancelButton = createElement("Cancel", "button", cancelEdit);
-
-      $tasksList.append($inputField, $updateButton, $cancelButton);
-    } else {
-      const $deleteButton = createElement("Delete", "button", () =>
-        deleteTask(task.id)
-      );
-      const $editButton = createElement("Edit", "button", () =>
-        editHandler(task)
-      );
-
-      $tasksList.append($titleElement, $deleteButton, $editButton);
-    }
-
-    $taskList.appendChild($tasksList);
+    const $taskElement = createTaskElement(
+      task,
+      deleteTask,
+      editHandler,
+      updateHandler,
+      cancelEdit
+    );
+    $taskList.appendChild($taskElement);
   });
 };
 

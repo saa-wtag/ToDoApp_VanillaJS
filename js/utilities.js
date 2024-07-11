@@ -22,10 +22,29 @@ export const createElement = (text, type, onClick) => {
   return $element;
 };
 
-export const formatDate = (now) => {
-  const day = now.getDate().toString().padStart(2, "0");
-  const month = (now.getMonth() + 1).toString().padStart(2, "0");
-  const year = now.getFullYear().toString().slice(-2);
+export const createTaskElement = (task, deleteTask) => {
+  const $taskItem = document.createElement("li");
 
-  return `${day},${month},${year}`;
+  const $titleElement = document.createElement("span");
+  $titleElement.textContent = task.title;
+
+  const $createdAtElement = document.createElement("span");
+  $createdAtElement.textContent = " Created at: " + formatDate(task.id);
+
+  const $deleteButton = createElement("Delete", "button", () =>
+    deleteTask(task.id)
+  );
+  $taskItem.appendChild($titleElement);
+  $taskItem.appendChild($createdAtElement);
+  $taskItem.appendChild($deleteButton);
+
+  return $taskItem;
+};
+
+export const formatDate = (timestamp) => {
+  const date = new Date(timestamp);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = String(date.getFullYear()).slice(-2);
+  return `${day}.${month}.${year}`;
 };
