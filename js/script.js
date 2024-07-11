@@ -2,7 +2,7 @@ import { $taskInput, $addButton, $taskList } from "./elements.js";
 import {
   showToastMessage,
   sanitizeInput,
-  createElement,
+  createTaskElement,
   formatDate,
   createTaskElement,
 } from "./utilities.js";
@@ -27,13 +27,13 @@ const deleteTask = (taskId) => {
 
 const editTask = (task) => {
   cancelEdit();
-  task.editMode = true;
+  task.isEditing = true;
   renderTasks();
 };
 
 const updateTask = (task, newTitle) => {
-  if (newTitle.trim().length > 0) {
-    task.title = newTitle.trim();
+  if (newTitle) {
+    task.title = newTitle;
   }
   cancelEdit();
   renderTasks();
@@ -52,8 +52,6 @@ const createTask = (taskTitle) => {
     id: new Date().getTime(),
     title: taskTitle,
     createdAt: formatDate(new Date()),
-    deleteButton: createElement("Delete", "button", () => deleteTask(task.id)),
-    editMode: false,
   };
   tasks.unshift(task);
   renderTasks();
@@ -69,15 +67,14 @@ const renderTasks = () => {
       deleteTask,
       editTask,
       updateTask,
-      cancelEdit,
-      doneTask
+      cancelEdit
     );
     $taskList.appendChild($taskElement);
   });
 };
 
 const cancelEdit = () => {
-  tasks.forEach((task) => (task.editMode = false));
+  tasks.forEach((task) => (task.isEditing = false));
   renderTasks();
 };
 
