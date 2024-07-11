@@ -2,14 +2,11 @@ import { $toaster, $toastBox, $taskListContainer } from "./elements.js";
 import {
   COLORS,
   ICONS,
-  MESSAGES,
   TASK_BUTTON_CLASSES,
   TASK_CONTAINER_CLASSES,
   FILTER_BUTTON_CLASSES,
   CARD_BUTTON_CLASSES,
   TASK_TITLE_CLASSES,
-  OVERLAY_STYLES,
-  SPINNER_STYLES,
 } from "./const.js";
 
 export const showToastMessage = (message, isSuccess) => {
@@ -192,23 +189,30 @@ const calculateCompletionTime = (task) => {
 };
 
 export const showSpinnerOverlay = (targetContainer) => {
-  const $overlay = document.createElement("div");
-  Object.assign($overlay.style, OVERLAY_STYLES);
+  const overlay = document.createElement("div");
+  overlay.classList.add("overlay");
 
-  const $spinnerImage = document.createElement("img");
-  $spinnerImage.src = ICONS.SPINNER;
-  $spinnerImage.alt = "Loading...";
-  Object.assign($spinnerImage.style, SPINNER_STYLES);
+  const spinnerImage = document.createElement("img");
+  spinnerImage.src = ICONS.SPINNER;
+  spinnerImage.alt = "Loading...";
+  spinnerImage.id = "spinner";
 
-  $overlay.appendChild($spinnerImage);
+  overlay.appendChild(spinnerImage);
   targetContainer.style.position = "relative";
-  targetContainer.appendChild($overlay);
+  targetContainer.appendChild(overlay);
 
-  return $overlay;
+  return overlay;
 };
 
-export const hideSpinnerOverlay = ($overlay) => {
-  if ($overlay && $overlay.parentNode) {
-    $overlay.parentNode.removeChild($overlay);
+export const hideSpinnerOverlay = (overlay) => {
+  if (overlay && overlay.parentNode) {
+    overlay.parentNode.removeChild(overlay);
   }
+};
+
+export const setActiveButton = (button) => {
+  document.querySelectorAll(".filters-button").forEach((btn) => {
+    btn.classList.remove("active");
+  });
+  button.classList.add("active");
 };

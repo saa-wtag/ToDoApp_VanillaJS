@@ -17,6 +17,7 @@ import {
   containerBuilder,
   showSpinnerOverlay,
   hideSpinnerOverlay,
+  setActiveButton,
 } from "./utilities.js";
 import { MESSAGES } from "./const.js";
 
@@ -31,11 +32,11 @@ const addButtonHandler = (container) => {
   isVisible = !isVisible;
   const taskTitle = document.getElementById("task-input").value.trim();
   if (taskTitle) {
-    const $overlay = showSpinnerOverlay(container);
+    const overlay = showSpinnerOverlay(container);
     setTimeout(() => {
       createTask(taskTitle);
       showToastMessage(MESSAGES.SUCCESS, true);
-      hideSpinnerOverlay($overlay);
+      hideSpinnerOverlay(overlay);
     }, 1000);
   } else {
     showToastMessage(MESSAGES.ERROR, false);
@@ -56,7 +57,7 @@ const createButtonHandler = () => {
 
 const searchButtonHandler = () => {
   const searchTitle = $searchInput.value.trim().toLowerCase();
-  const $overlay = showSpinnerOverlay($taskListContainer);
+  const overlay = showSpinnerOverlay($taskListContainer);
 
   setTimeout(() => {
     filteredOrSearchAbleTasks = [...tasks];
@@ -89,13 +90,13 @@ const searchButtonHandler = () => {
       showToastMessage(MESSAGES.NO_TASKS_FOUND);
     }
 
-    hideSpinnerOverlay($overlay);
+    hideSpinnerOverlay(overlay);
     $searchInput.value = "";
   }, 1000);
 };
 
 const deleteHandler = (taskId, container) => {
-  const $overlay = showSpinnerOverlay(container);
+  const overlay = showSpinnerOverlay(container);
   setTimeout(() => {
     const index = tasks.findIndex((task) => task.id === taskId);
     if (index !== -1) {
@@ -103,7 +104,7 @@ const deleteHandler = (taskId, container) => {
       tasksDisplayed = Math.max(0, tasksDisplayed - 1);
     }
     filterTasks();
-    hideSpinnerOverlay($overlay);
+    hideSpinnerOverlay(overlay);
   }, 1000);
 };
 
@@ -117,25 +118,25 @@ const editHandler = (task) => {
 
 const updateHandler = (task, container, newTitle) => {
   if (newTitle.length > 0) {
-    const $overlay = showSpinnerOverlay(container);
+    const overlay = showSpinnerOverlay(container);
     setTimeout(() => {
       task.title = newTitle;
       task.editMode = false;
       filterTasks();
-      hideSpinnerOverlay($overlay);
+      hideSpinnerOverlay(overlay);
     }, 1000);
   }
 };
 
 const doneHandler = (taskId, container) => {
-  const $overlay = showSpinnerOverlay(container);
+  const overlay = showSpinnerOverlay(container);
   setTimeout(() => {
     const task = tasks.find((task) => task.id === taskId);
     if (task) {
       task.done = !task.done;
       filterTasks();
     }
-    hideSpinnerOverlay($overlay);
+    hideSpinnerOverlay(overlay);
   }, 1000);
 };
 
@@ -215,19 +216,22 @@ $noTask.addEventListener("click", createButtonHandler);
 $createButton.addEventListener("click", createButtonHandler);
 $searchButton.addEventListener("click", searchButtonHandler);
 
-$filterAllButton.addEventListener("click", () => {
+$filterAllButton.addEventListener("click", (event) => {
   currentFilter = "all";
   filterTasks();
+  setActiveButton(event.target);
 });
 
-$filterIncompleteButton.addEventListener("click", () => {
+$filterIncompleteButton.addEventListener("click", (event) => {
   currentFilter = "incomplete";
   filterTasks();
+  setActiveButton(event.target);
 });
 
-$filterCompleteButton.addEventListener("click", () => {
+$filterCompleteButton.addEventListener("click", (event) => {
   currentFilter = "complete";
   filterTasks();
+  setActiveButton(event.target);
 });
 
 const filterTasks = () => {
