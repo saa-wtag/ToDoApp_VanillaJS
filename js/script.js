@@ -1,9 +1,9 @@
 import { $taskInput, $addButton, $taskList } from "./elements.js";
 import {
   showToastMessage,
+  createTaskElement,
   sanitizeInput,
   formatDate,
-  createTaskElement,
 } from "./utilities.js";
 
 let tasks = [];
