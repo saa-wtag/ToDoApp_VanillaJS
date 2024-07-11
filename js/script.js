@@ -19,11 +19,12 @@ import {
   showSpinnerOverlay,
   hideSpinnerOverlay,
   formatDate,
+  setActiveButton,
 } from "./utilities.js";
 import { MESSAGES } from "./const.js";
 
 let tasks = [];
-let isVisible = false; 
+let isVisible = false;
 let currentFilter = "all";
 let filteredOrSearchAbleTasks = [];
 
@@ -124,7 +125,7 @@ const doneTask = (taskId, container) => {
     const task = tasks.find((task) => task.id === taskId);
     if (task) {
       task.done = !task.done;
-      renderTasks(tasks); // No need to call cancelEdit here
+      renderTasks(tasks); 
     }
     hideSpinnerOverlay(overlay);
   }, 1000);
@@ -135,8 +136,8 @@ const createTask = (taskTitle) => {
     id: new Date().getTime(),
     title: taskTitle,
     createdAt: formatDate(new Date()),
-    editMode: false, // Ensure edit mode is false initially
-    done: false, // Ensure task is not marked as done initially
+    editMode: false, 
+    done: false, 
   };
   tasks.unshift(task);
   renderTasks(tasks);
