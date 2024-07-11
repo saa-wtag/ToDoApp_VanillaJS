@@ -7,18 +7,21 @@ import {
 } from "./elements.js";
 import {
   showToastMessage,
-  handleInputChange,
-  createButton,
+  createTaskElement,
+  sanitizeInput,
+  formatDate,
 } from "./utilities.js";
 
 let tasks = [];
 
 const addButtonHandler = () => {
-  const taskTitle = $taskInput.value.trim();
+  const taskTitle = sanitizeInput($taskInput.value);
   if (taskTitle) {
     createTask(taskTitle);
     showToastMessage("Task added successfully!");
     $addButton.disabled = true;
+  } else {
+    showToastMessage("Please provide a valid title!");
   }
 };
 
@@ -40,26 +43,26 @@ const searchButtonHandler = () => {
   $searchInput.value = "";
 };
 
-const deleteHandler = (taskId) => {
+const deleteTask = (taskId) => {
   tasks = tasks.filter((task) => task.id !== taskId);
   renderTasks(tasks);
 };
 
-const editHandler = (task) => {
+const editTask = (task) => {
   cancelEdit();
-  task.editMode = true;
+  task.isEditing = true;
   renderTasks();
 };
 
-const updateHandler = (task, newTitle) => {
-  if (newTitle.trim().length > 0) {
-    task.title = newTitle.trim();
+const updateTask = (task, newTitle) => {
+  if (newTitle) {
+    task.title = newTitle;
   }
   cancelEdit();
   renderTasks(tasks);
 };
 
-const doneHandler = (taskId) => {
+const doneTask = (taskId) => {
   const task = tasks.find((task) => task.id === taskId);
   if (task) {
     task.done = !task.done;
@@ -68,66 +71,43 @@ const doneHandler = (taskId) => {
 };
 
 const createTask = (taskTitle) => {
-  tasks.unshift({
+  const task = {
     id: new Date().getTime(),
     title: taskTitle,
-    done: false,
-    editMode: false,
-  });
+    createdAt: formatDate(new Date()),
+  };
+  tasks.unshift(task);
   renderTasks(tasks);
   $taskInput.value = "";
-  $addButton.disabled = true;
 };
 
 const renderTasks = (tasks = []) => {
   $taskList.innerHTML = "";
+
   tasks.forEach((task) => {
-    const $tasksList = document.createElement("li");
-    const $titleElement = document.createElement("span");
-    $titleElement.textContent = task.title;
-    if (task.done) {
-      $titleElement.style.textDecoration = "line-through";
-    }
-
-    if (task.editMode) {
-      const $inputField = document.createElement("input");
-      $inputField.type = "text";
-      $inputField.value = task.title;
-
-      const $updateButton = createButton("Update", () =>
-        updateHandler(task, $inputField.value)
-      );
-      const $cancelButton = createButton("Cancel", cancelEdit);
-
-      $inputField.addEventListener("input", () => {
-        handleInputChange($inputField, $updateButton, task);
-      });
-
-      $tasksList.append($inputField, $updateButton, $cancelButton);
-    } else {
-      const $deleteButton = createButton("Delete", () =>
-        deleteHandler(task.id)
-      );
-      const $editButton = createButton("Edit", () => editHandler(task));
-      const $doneButton = createButton("Done", () => doneHandler(task.id));
-
-      $tasksList.append($titleElement, $deleteButton);
-      if (!task.done) {
-        $tasksList.append($editButton, $doneButton);
-      }
-    }
-
-    $taskList.appendChild($tasksList);
+    const $taskElement = createTaskElement(
+      task,
+      deleteTask,
+      editTask,
+      updateTask,
+      cancelEdit,
+      doneTask
+    );
+    $taskList.appendChild($taskElement);
   });
 };
 
 const cancelEdit = () => {
-  tasks.forEach((task) => (task.editMode = false));
+  tasks.forEach((task) => (task.isEditing = false));
   renderTasks(tasks);
 };
 
 $taskInput.addEventListener("input", () => {
-  $addButton.disabled = !$taskInput.value.trim();
+  if ($taskInput.value.trim()) {
+    $addButton.disabled = false;
+  } else {
+    $addButton.disabled = true;
+  }
 });
 
 $addButton.addEventListener("click", addButtonHandler);
