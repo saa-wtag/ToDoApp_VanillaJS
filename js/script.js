@@ -15,15 +15,17 @@ import {
   containerBuilder,
   showSpinnerOverlay,
   hideSpinnerOverlay,
+  formatDate,
 } from "./utilities.js";
 import { MESSAGES } from "./const.js";
 
 let tasks = [];
-let isVisible;
+let isVisible = false; 
 
 const addButtonHandler = (container) => {
   isVisible = !isVisible;
   const taskTitle = sanitizeInput(document.getElementById("task-input").value);
+
   if (taskTitle) {
     const $overlay = showSpinnerOverlay(container);
     setTimeout(() => {
@@ -84,11 +86,11 @@ const editTask = (task) => {
 };
 
 const updateTask = (task, container, newTitle) => {
-  if (newTitle.length > 0) {
+  if (newTitle) {
     const $overlay = showSpinnerOverlay(container);
     setTimeout(() => {
       task.title = newTitle;
-      cancelEdit();
+      task.editMode = false; // exit edit mode
       renderTasks(tasks);
       hideSpinnerOverlay($overlay);
     }, 1000);
@@ -101,8 +103,7 @@ const doneTask = (taskId, container) => {
     const task = tasks.find((task) => task.id === taskId);
     if (task) {
       task.done = !task.done;
-      cancelEdit();
-      renderTasks(tasks);
+      renderTasks(tasks); // No need to call cancelEdit here
     }
     hideSpinnerOverlay($overlay);
   }, 1000);
@@ -113,18 +114,20 @@ const createTask = (taskTitle) => {
     id: new Date().getTime(),
     title: taskTitle,
     createdAt: formatDate(new Date()),
+    editMode: false, // Ensure edit mode is false initially
+    done: false, // Ensure task is not marked as done initially
   };
   tasks.unshift(task);
   renderTasks(tasks);
 };
 
-const renderTasks = (tasks = []) => {
+const renderTasks = (tasksToRender = tasks) => {
   $taskListContainer.innerHTML = "";
-  tasks.forEach((task) => {
+  tasksToRender.forEach((task) => {
     containerBuilder(task, doneTask, editTask, deleteTask, updateTask);
   });
 
-  if (tasks.length === 0) {
+  if (tasksToRender.length === 0) {
     $noTask.style.display = "flex";
   } else {
     $noTask.style.display = "none";
@@ -137,7 +140,7 @@ const renderNoTasks = () => {
 };
 
 const cancelEdit = () => {
-  tasks.forEach((task) => (task.isEditing = false));
+  tasks.forEach((task) => (task.editMode = false));
   renderTasks(tasks);
 };
 

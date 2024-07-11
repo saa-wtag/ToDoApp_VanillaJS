@@ -31,13 +31,6 @@ const createElement = (type, classes = []) => {
   return element;
 };
 
-export const handleInputChange = ($inputField, $updateButton, currentTask) => {
-  const trimmedValue = $inputField.value.trim();
-  $updateButton.disabled = !(
-    trimmedValue.length > 0 && trimmedValue !== currentTask.title
-  );
-};
-
 export const toggleInputContainer = (isVisible, addButtonHandler) => {
   if (isVisible) {
     $taskListContainer.style.display = "grid";
@@ -87,16 +80,13 @@ export const createTaskElement = (addButtonHandler) => {
     addButtonHandler(taskContainer);
   });
 
-  const deleteButton = document.createElement("button");
-  deleteButton.classList.add(...CARD_BUTTON_CLASSES);
-  deleteButton.id = "delete-button";
-  const deleteImg = document.createElement("img");
-  deleteImg.src = ICONS.DELETE;
-  deleteImg.alt = "Delete";
-  deleteButton.appendChild(deleteImg);
-  deleteButton.addEventListener("click", () => {
-    taskContainer.remove();
-  });
+  const deleteButton = createButton(
+    "delete-button",
+    ICONS.DELETE,
+    "Delete",
+    () => taskContainer.remove()
+  );
+
   taskButtonsDiv.append(addButton, deleteButton);
   taskContainer.append(taskInputDiv, taskButtonsDiv);
 
@@ -191,7 +181,7 @@ const calculateCompletionTime = (task) => {
   return diffDays;
 };
 
-const formatDate = (createdAt) => {
+export const formatDate = (createdAt) => {
   const date = new Date(createdAt);
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
