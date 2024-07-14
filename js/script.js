@@ -25,7 +25,6 @@ const deleteTask = (taskId) => {
 };
 
 const editTask = (task) => {
-  cancelEdit();
   task.isEditing = true;
   renderTasks();
 };
@@ -33,15 +32,16 @@ const editTask = (task) => {
 const updateTask = (task, newTitle) => {
   if (newTitle) {
     task.title = newTitle;
+    task.isEditing = false;
   }
-  cancelEdit();
   renderTasks();
 };
 
 const completeTask = (taskId) => {
   const task = tasks.find((task) => task.id === taskId);
-  if (task) {
+  if (task && !task.done) {
     task.done = true;
+    task.isEditing = false;
     renderTasks();
   }
 };
@@ -73,8 +73,10 @@ const renderTasks = () => {
   });
 };
 
-const cancelEdit = () => {
-  tasks.forEach((task) => (task.isEditing = false));
+const cancelEdit = (curTask) => {
+  tasks.forEach((task) => {
+    if (task.id === curTask.id) task.isEditing = false;
+  });
   renderTasks();
 };
 
