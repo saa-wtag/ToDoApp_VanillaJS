@@ -26,7 +26,7 @@ import { MESSAGES } from "./const.js";
 let tasks = [];
 let isVisible = false;
 let currentFilter = "all";
-let filteredOrSearchAbleTasks = [];
+let filteredOrSearchableTasks = [];
 let tasksDisplayed = 0;
 const tasksPerPage = 9;
 
@@ -54,7 +54,7 @@ const createButtonHandler = () => {
   toggleInputContainer(isVisible, addButtonHandler);
   if (!isVisible)
     renderTasks(
-      filteredOrSearchAbleTasks.length ? filteredOrSearchAbleTasks : tasks
+      filteredOrSearchableTasks.length ? filteredOrSearchableTasks : tasks
     );
 };
 
@@ -63,36 +63,7 @@ const searchButtonHandler = () => {
   const overlay = showSpinnerOverlay($taskListContainer);
 
   setTimeout(() => {
-    filteredOrSearchAbleTasks = [...tasks];
-
-    if (searchTitle) {
-      filteredOrSearchAbleTasks = filteredOrSearchAbleTasks.filter((task) =>
-        task.title.toLowerCase().includes(searchTitle)
-      );
-    }
-
-    switch (currentFilter) {
-      case "incomplete":
-        filteredOrSearchAbleTasks = filteredOrSearchAbleTasks.filter(
-          (task) => !task.done
-        );
-        break;
-      case "complete":
-        filteredOrSearchAbleTasks = filteredOrSearchAbleTasks.filter(
-          (task) => task.done
-        );
-        break;
-      default:
-        break;
-    }
-
-    if (filteredOrSearchAbleTasks.length > 0) {
-      tasksDisplayed = Math.min(tasksPerPage, filteredOrSearchAbleTasks.length);
-      renderTasks(filteredOrSearchAbleTasks);
-    } else {
-      showToastMessage(MESSAGES.NO_TASKS_FOUND);
-    }
-
+    filterTasks(searchTitle);
     hideSpinnerOverlay(overlay);
     $searchInput.value = "";
   }, 1000);
@@ -112,9 +83,9 @@ const deleteTask = (taskId, container) => {
 };
 
 const editTask = (task) => {
-  task.isEditting = true;
+  task.isEditing = true;
   renderTasks(
-    filteredOrSearchAbleTasks.length ? filteredOrSearchAbleTasks : tasks
+    filteredOrSearchableTasks.length ? filteredOrSearchableTasks : tasks
   );
 };
 
@@ -123,7 +94,7 @@ const updateTask = (task, container, newTitle) => {
     const overlay = showSpinnerOverlay(container);
     setTimeout(() => {
       task.title = newTitle;
-      task.isEditting = false;
+      task.isEditing = false;
       filterTasks();
       hideSpinnerOverlay(overlay);
     }, 1000);
@@ -164,26 +135,18 @@ const renderTasks = (tasksToRender) => {
     containerBuilder(task, completeTask, editTask, deleteTask, updateTask);
   });
 
-  if (tasksToRender.length === 0) {
-    $noTask.style.display = "flex";
-  } else {
-    $noTask.style.display = "none";
-  }
-
-  if (tasksToRender.length > tasksDisplayed) {
-    $loadMore.style.display = "block";
-  } else {
-    $loadMore.style.display = "none";
-  }
+  $noTask.style.display = tasksToRender.length === 0 ? "flex" : "none";
+  $loadMore.style.display =
+    tasksToRender.length > tasksDisplayed ? "block" : "none";
 };
 
 $loadMore.addEventListener("click", () => {
   tasksDisplayed = Math.min(
     tasksDisplayed + tasksPerPage,
-    filteredOrSearchAbleTasks.length || tasks.length
+    filteredOrSearchableTasks.length || tasks.length
   );
   renderTasks(
-    filteredOrSearchAbleTasks.length ? filteredOrSearchAbleTasks : tasks
+    filteredOrSearchableTasks.length ? filteredOrSearchableTasks : tasks
   );
 });
 
@@ -192,8 +155,8 @@ const renderNoTasks = () => {
   $loadMore.style.display = "none";
 };
 
-document.addEventListener("DOMContentLoaded", function () {
-  setTimeout(function () {
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
     $splash.style.display = "none";
     isVisible = false;
     $mainContainer.hidden = false;
@@ -225,28 +188,20 @@ $filterCompleteButton.addEventListener("click", (event) => {
   setActiveButton(event.target);
 });
 
-const filterTasks = () => {
-  let filteredTasks = [...tasks];
+const filterTasks = (searchTitle = "") => {
+  let filteredTasks = tasks.filter((task) => {
+    if (currentFilter === "incomplete") return !task.done;
+    if (currentFilter === "complete") return task.done;
+    return true;
+  });
 
-  switch (currentFilter) {
-    case "incomplete":
-      filteredTasks = filteredTasks.filter((task) => !task.done);
-      break;
-    case "complete":
-      filteredTasks = filteredTasks.filter((task) => task.done);
-      break;
-    default:
-      break;
-  }
-
-  const searchTitle = $searchInput.value.trim().toLowerCase();
   if (searchTitle) {
     filteredTasks = filteredTasks.filter((task) =>
       task.title.toLowerCase().includes(searchTitle)
     );
   }
 
-  filteredOrSearchAbleTasks = filteredTasks;
+  filteredOrSearchableTasks = filteredTasks;
   tasksDisplayed = Math.min(tasksDisplayed, filteredTasks.length);
   renderTasks(filteredTasks);
 };
