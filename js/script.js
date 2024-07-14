@@ -112,7 +112,6 @@ const deleteTask = (taskId, container) => {
 };
 
 const editTask = (task) => {
-  cancelEdit();
   task.isEditting = true;
   renderTasks(
     filteredOrSearchAbleTasks.length ? filteredOrSearchAbleTasks : tasks
@@ -135,9 +134,9 @@ const completeTask = (taskId, container) => {
   const overlay = showSpinnerOverlay(container);
   setTimeout(() => {
     const task = tasks.find((task) => task.id === taskId);
-    if (task) {
-      task.done = true;
-      filterTasks();
+    if (task && !task.done) {
+      task.done = !task.done;
+      renderTasks(tasks);
     }
     hideSpinnerOverlay(overlay);
   }, 1000);
@@ -148,7 +147,7 @@ const createTask = (taskTitle) => {
     id: new Date().getTime(),
     title: taskTitle,
     createdAt: formatDate(new Date()),
-    isEditting: false,
+    isEditing: false,
     done: false,
   };
   tasks.unshift(task);
@@ -191,13 +190,6 @@ $loadMore.addEventListener("click", () => {
 const renderNoTasks = () => {
   $taskListContainer.style.display = "none";
   $loadMore.style.display = "none";
-};
-
-const cancelEdit = () => {
-  tasks.forEach((task) => (task.isEditting = false));
-  renderTasks(
-    filteredOrSearchAbleTasks.length ? filteredOrSearchAbleTasks : tasks
-  );
 };
 
 document.addEventListener("DOMContentLoaded", function () {
