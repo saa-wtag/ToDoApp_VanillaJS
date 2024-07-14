@@ -34,7 +34,7 @@ export const createTaskElement = (
 
   const $titleElement = document.createElement("span");
   $titleElement.textContent = task.title;
-  if (task.done) {
+  if (task && task.done) {
     $titleElement.style.textDecoration = "line-through";
   }
 
