@@ -5,7 +5,7 @@ export const showToastMessage = (message) => {
   $toaster.hidden = false;
   setTimeout(() => {
     $toaster.hidden = true;
-  }, 1500);
+  }, 3000);
 };
 
 export const sanitizeInput = (value) => {
