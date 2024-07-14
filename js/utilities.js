@@ -95,36 +95,37 @@ export const createTaskElement = (addButtonHandler) => {
 
 export const containerBuilder = (
   task,
-  doneTask,
+  completeTask,
   editTask,
   deleteTask,
-  editTask,
-  updateTask,
-  cancelEdit,
-  completeTask
+  updateTask
 ) => {
-  const $taskItem = document.createElement("li");
+  const taskContainer = createElement("div", TASK_CONTAINER_CLASSES);
+  taskContainer.id = task.done ? "done-task-unit" : "remaining-task-unit";
 
-  const $titleElement = document.createElement("span");
-  $titleElement.textContent = task.title;
+  const taskInfo = createElement("div");
+  const taskButtons = createElement("div", TASK_BUTTON_CLASSES);
+
+  const content = task.editMode
+    ? buildEditModeContent(task)
+    : buildNormalModeContent(task);
+
+  taskContainer.append(taskInfo, taskButtons);
+  taskInfo.append(...content);
+
   if (task && task.done) {
-    $titleElement.style.textDecoration = "line-through";
-  }
+    task.editMode = false;
+    const doneAt = createElement("p");
+    doneAt.textContent = `Completed in ${calculateCompletionTime(task)} days`;
+    doneAt.id = "task-done-at";
+    taskButtons.id = "done-task-buttons";
+    taskButtons.prepend(doneAt);
 
-  if (task.isEditing) {
-    const $inputField = document.createElement("input");
-    $inputField.type = "text";
-    $inputField.value = task.title;
-
-    const $updateButton = createElement("Update", "button", () => {
-      const sanitizedTitle = sanitizeInput($inputField.value);
-      updateTask(task, sanitizedTitle);
-    });
-    const $cancelButton = createElement("Cancel", "button", () => {
-      cancelEdit(task);
-    });
-
-    $taskItem.append($inputField, $updateButton, $cancelButton);
+    taskButtons.prepend(
+      createButton("delete-button", ICONS.DELETE, "Delete", () =>
+        deleteTask(task.id, taskContainer)
+      )
+    );
   } else {
     if (!task.editMode) {
       taskButtons.append(
@@ -140,7 +141,7 @@ export const containerBuilder = (
 
     taskButtons.append(
       createButton("done-button", ICONS.DONE, "Done", () =>
-        doneTask(task.id, taskContainer)
+        completeTask(task.id, taskContainer)
       )
     );
 

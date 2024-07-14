@@ -80,7 +80,7 @@ const deleteTask = (taskId, container) => {
 };
 
 const editTask = (task) => {
-  task.isEditing = true;
+  task.editMode = true;
   renderTasks(tasks);
 };
 
@@ -94,15 +94,18 @@ const updateTask = (task, container, newTitle) => {
       hideSpinnerOverlay($overlay);
     }, 1000);
   }
-  renderTasks(tasks);
 };
 
-const completeTask = (taskId) => {
-  const task = tasks.find((task) => task.id === taskId);
-  if (task && !task.done) {
-    task.done = true;
-    renderTasks(tasks);
-  }
+const completeTask = (taskId, container) => {
+  const $overlay = showSpinnerOverlay(container);
+  setTimeout(() => {
+    const task = tasks.find((task) => task.id === taskId);
+    if (task && !task.done) {
+      task.done = !task.done;
+      renderTasks(tasks);
+    }
+    hideSpinnerOverlay($overlay);
+  }, 1000);
 };
 
 const createTask = (taskTitle) => {
@@ -120,7 +123,7 @@ const createTask = (taskTitle) => {
 const renderTasks = (tasksToRender = tasks) => {
   $taskListContainer.innerHTML = "";
   tasksToRender.forEach((task) => {
-    containerBuilder(task, doneTask, editTask, deleteTask, updateTask);
+    containerBuilder(task, completeTask, editTask, deleteTask, updateTask);
   });
 
   if (tasksToRender.length === 0) {
@@ -137,7 +140,7 @@ const renderNoTasks = () => {
 
 const cancelEdit = (curTask) => {
   tasks.forEach((task) => {
-    if (task.id === curTask.id) task.isEditing = false;
+    if (task.id === curTask.id) task.editMode = false;
   });
   renderTasks(tasks);
 };
