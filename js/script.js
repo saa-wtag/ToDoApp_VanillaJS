@@ -65,7 +65,9 @@ const renderTasks = () => {
 
 const cancelEdit = (curTask) => {
   tasks.forEach((task) => {
-    if (task.id === curTask.id) task.isEditing = false;
+    if (task.id === curTask.id) {
+      task.isEditing = false;
+    }
   });
   renderTasks();
 };
