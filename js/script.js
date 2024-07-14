@@ -39,11 +39,15 @@ const updateTask = (task, newTitle) => {
 
 const completeTask = (taskId) => {
   const task = tasks.find((task) => task.id === taskId);
-  if (task && !task.done) {
-    task.done = true;
-    task.isEditing = false;
-    renderTasks();
+
+  if (task === undefined) {
+    return;
   }
+
+  task.done = true;
+  task.isEditing = false;
+
+  renderTasks();
 };
 
 const createTask = (taskTitle) => {
