@@ -43,7 +43,9 @@ export const createTaskElement = (
       const sanitizedTitle = sanitizeInput($inputField.value);
       updateTask(task, sanitizedTitle);
     });
-    const $cancelButton = createElement("Cancel", "button", cancelEdit);
+    const $cancelButton = createElement("Cancel", "button", () =>
+      cancelEdit(task)
+    );
 
     $taskItem.append($inputField, $updateButton, $cancelButton);
   } else {
