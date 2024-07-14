@@ -102,8 +102,7 @@ const deleteTask = (taskId, container) => {
 };
 
 const editTask = (task) => {
-  cancelEdit();
-  task.editMode = true;
+  task.isEditing = true;
   renderTasks(tasks);
 };
 
@@ -112,20 +111,20 @@ const updateTask = (task, container, newTitle) => {
     const overlay = showSpinnerOverlay(container);
     setTimeout(() => {
       task.title = newTitle;
-      task.editMode = false;
+      task.isEditing = false;
       renderTasks(tasks);
       hideSpinnerOverlay(overlay);
     }, 1000);
   }
 };
 
-const doneTask = (taskId, container) => {
+const completeTask = (taskId, container) => {
   const overlay = showSpinnerOverlay(container);
   setTimeout(() => {
     const task = tasks.find((task) => task.id === taskId);
-    if (task) {
+    if (task && !task.done) {
       task.done = !task.done;
-      renderTasks(tasks); 
+      renderTasks(tasks);
     }
     hideSpinnerOverlay(overlay);
   }, 1000);
@@ -136,8 +135,8 @@ const createTask = (taskTitle) => {
     id: new Date().getTime(),
     title: taskTitle,
     createdAt: formatDate(new Date()),
-    editMode: false, 
-    done: false, 
+    isEditing: false,
+    done: false,
   };
   tasks.unshift(task);
   renderTasks(tasks);
@@ -146,7 +145,7 @@ const createTask = (taskTitle) => {
 const renderTasks = (tasksToRender = tasks) => {
   $taskListContainer.innerHTML = "";
   tasksToRender.forEach((task) => {
-    containerBuilder(task, doneTask, editTask, deleteTask, updateTask);
+    containerBuilder(task, completeTask, editTask, deleteTask, updateTask);
   });
 
   if (tasksToRender.length === 0) {
@@ -159,11 +158,6 @@ const renderTasks = (tasksToRender = tasks) => {
 const renderNoTasks = () => {
   $taskListContainer.style.display = "none";
   $loadMore.style.display = "none";
-};
-
-const cancelEdit = () => {
-  tasks.forEach((task) => (task.editMode = false));
-  renderTasks(tasks);
 };
 
 document.addEventListener("DOMContentLoaded", function () {

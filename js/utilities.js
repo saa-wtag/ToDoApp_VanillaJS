@@ -95,7 +95,7 @@ export const createTaskElement = (addButtonHandler) => {
 
 export const containerBuilder = (
   task,
-  doneTask,
+  completeTask,
   editTask,
   deleteTask,
   updateTask
@@ -113,7 +113,7 @@ export const containerBuilder = (
   taskContainer.append(taskInfo, taskButtons);
   taskInfo.append(...content);
 
-  if (task.done) {
+  if (task && task.done) {
     task.editMode = false;
     const doneAt = createElement("p");
     doneAt.textContent = `Completed in ${calculateCompletionTime(task)} days`;
@@ -141,7 +141,7 @@ export const containerBuilder = (
 
     taskButtons.append(
       createButton("done-button", ICONS.DONE, "Done", () =>
-        doneTask(task.id, taskContainer)
+        completeTask(task.id, taskContainer)
       )
     );
 
