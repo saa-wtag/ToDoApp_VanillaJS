@@ -106,7 +106,7 @@ export const containerBuilder = (
   const taskInfo = createElement("div");
   const taskButtons = createElement("div", TASK_BUTTON_CLASSES);
 
-  const content = task.editMode
+  const content = task.isEditing
     ? buildEditModeContent(task)
     : buildNormalModeContent(task);
 
@@ -114,7 +114,7 @@ export const containerBuilder = (
   taskInfo.append(...content);
 
   if (task && task.done) {
-    task.editMode = false;
+    task.isEditing = false;
     const doneAt = createElement("p");
     doneAt.textContent = `Completed in ${calculateCompletionTime(task)} days`;
     doneAt.id = "task-done-at";
@@ -127,7 +127,7 @@ export const containerBuilder = (
       )
     );
   } else {
-    if (!task.editMode) {
+    if (!task.isEditing) {
       taskButtons.append(
         createButton("edit-button", ICONS.EDIT, "Edit", () => editTask(task))
       );
