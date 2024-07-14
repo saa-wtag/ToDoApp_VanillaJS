@@ -17,7 +17,7 @@ export const showToastMessage = (message, isSuccess) => {
   setTimeout(() => {
     $toastBox.style.backgroundColor = COLORS.DEFAULT;
     $toaster.hidden = true;
-  }, 1500);
+  }, 3000);
 };
 
 export const sanitizeInput = (value) => {
