@@ -105,10 +105,13 @@ const completeTask = (taskId, container) => {
   const overlay = showSpinnerOverlay(container);
   setTimeout(() => {
     const task = tasks.find((task) => task.id === taskId);
-    if (task && !task.done) {
-      task.done = !task.done;
-      renderTasks(tasks);
+    if (task === undefined) {
+      return;
     }
+
+    task.done = true;
+    task.isEditing = false;
+    renderTasks(tasks);
     hideSpinnerOverlay(overlay);
   }, 1000);
 };
