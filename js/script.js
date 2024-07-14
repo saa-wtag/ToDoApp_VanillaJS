@@ -50,7 +50,7 @@ const deleteTask = (taskId) => {
 
 const editTask = (task) => {
   task.isEditing = true;
-  renderTasks();
+  renderTasks(tasks);
 };
 
 const updateTask = (task, newTitle) => {
