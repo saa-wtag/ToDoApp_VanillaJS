@@ -80,8 +80,7 @@ const deleteTask = (taskId, container) => {
 };
 
 const editTask = (task) => {
-  cancelEdit();
-  task.editMode = true;
+  task.isEditing = true;
   renderTasks(tasks);
 };
 
@@ -95,18 +94,15 @@ const updateTask = (task, container, newTitle) => {
       hideSpinnerOverlay($overlay);
     }, 1000);
   }
+  renderTasks(tasks);
 };
 
-const doneTask = (taskId, container) => {
-  const $overlay = showSpinnerOverlay(container);
-  setTimeout(() => {
-    const task = tasks.find((task) => task.id === taskId);
-    if (task) {
-      task.done = !task.done;
-      renderTasks(tasks);
-    }
-    hideSpinnerOverlay($overlay);
-  }, 1000);
+const completeTask = (taskId) => {
+  const task = tasks.find((task) => task.id === taskId);
+  if (task && !task.done) {
+    task.done = true;
+    renderTasks(tasks);
+  }
 };
 
 const createTask = (taskTitle) => {
@@ -139,8 +135,10 @@ const renderNoTasks = () => {
   $loadMore.style.display = "none";
 };
 
-const cancelEdit = () => {
-  tasks.forEach((task) => (task.editMode = false));
+const cancelEdit = (curTask) => {
+  tasks.forEach((task) => {
+    if (task.id === curTask.id) task.isEditing = false;
+  });
   renderTasks(tasks);
 };
 
