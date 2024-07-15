@@ -27,11 +27,11 @@ const addButtonHandler = (container) => {
   const taskTitle = sanitizeInput(document.getElementById("task-input").value);
 
   if (taskTitle) {
-    const $overlay = showSpinnerOverlay(container);
+    const overlay = showSpinnerOverlay(container);
     setTimeout(() => {
       createTask(taskTitle);
       showToastMessage(MESSAGES.SUCCESS, true);
-      hideSpinnerOverlay($overlay);
+      hideSpinnerOverlay(overlay);
     }, 1000);
   } else {
     showToastMessage(MESSAGES.ERROR, false);
@@ -49,8 +49,7 @@ const createButtonHandler = () => {
 
 const searchButtonHandler = () => {
   const searchTitle = sanitizeInput($searchInput.value);
-  const $overlay = showSpinnerOverlay($taskListContainer);
-
+  const overlay = showSpinnerOverlay($taskListContainer);
   setTimeout(() => {
     if (searchTitle) {
       const filteredTasks = tasks.filter((task) =>
@@ -64,40 +63,39 @@ const searchButtonHandler = () => {
     } else {
       renderTasks(tasks);
     }
-
-    hideSpinnerOverlay($overlay);
+    hideSpinnerOverlay(overlay);
     $searchInput.value = "";
   }, 1000);
 };
 
 const deleteTask = (taskId, container) => {
-  const $overlay = showSpinnerOverlay(container);
+  const overlay = showSpinnerOverlay(container);
   setTimeout(() => {
     tasks = tasks.filter((task) => task.id !== taskId);
     renderTasks(tasks);
-    hideSpinnerOverlay($overlay);
+    hideSpinnerOverlay(overlay);
   }, 1000);
 };
 
 const editTask = (task) => {
-  task.editMode = true;
+  task.isEditing = true;
   renderTasks(tasks);
 };
 
 const updateTask = (task, container, newTitle) => {
   if (newTitle) {
-    const $overlay = showSpinnerOverlay(container);
+    const overlay = showSpinnerOverlay(container);
     setTimeout(() => {
       task.title = newTitle;
-      task.editMode = false;
+      task.isEditing = false;
       renderTasks(tasks);
-      hideSpinnerOverlay($overlay);
+      hideSpinnerOverlay(overlay);
     }, 1000);
   }
 };
 
 const completeTask = (taskId, container) => {
-  const $overlay = showSpinnerOverlay(container);
+  const overlay = showSpinnerOverlay(container);
   setTimeout(() => {
     const task = tasks.find((task) => task.id === taskId);
     if (task === undefined) {
@@ -107,7 +105,7 @@ const completeTask = (taskId, container) => {
     task.done = true;
     task.isEditing = false;
     renderTasks(tasks);
-    hideSpinnerOverlay($overlay);
+    hideSpinnerOverlay(overlay);
   }, 1000);
 };
 
@@ -116,7 +114,7 @@ const createTask = (taskTitle) => {
     id: new Date().getTime(),
     title: taskTitle,
     createdAt: formatDate(new Date()),
-    editMode: false,
+    isEditing: false,
     done: false,
   };
   tasks.unshift(task);
@@ -139,13 +137,6 @@ const renderTasks = (tasksToRender = tasks) => {
 const renderNoTasks = () => {
   $taskListContainer.style.display = "none";
   $loadMore.style.display = "none";
-};
-
-const cancelEdit = (curTask) => {
-  tasks.forEach((task) => {
-    if (task.id === curTask.id) task.editMode = false;
-  });
-  renderTasks(tasks);
 };
 
 document.addEventListener("DOMContentLoaded", function () {
