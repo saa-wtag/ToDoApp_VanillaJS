@@ -10,6 +10,9 @@ import {
   createTaskElement,
   sanitizeInput,
   formatDate,
+  successMessage,
+  invalidMessage,
+  noTaskMessage,
 } from "./utilities.js";
 
 let tasks = [];
@@ -18,29 +21,33 @@ const addButtonHandler = () => {
   const taskTitle = sanitizeInput($taskInput.value);
   if (taskTitle) {
     createTask(taskTitle);
-    showToastMessage("Task added successfully!");
+    showToastMessage(successMessage);
     $addButton.disabled = true;
   } else {
-    showToastMessage("Please provide a valid title!");
+    showToastMessage(invalidMessage);
   }
 };
 
 const searchButtonHandler = () => {
-  const searchTitle = sanitizeInput($searchInput.value);
-
-  if (searchTitle) {
-    const filteredTasks = tasks.filter((task) =>
-      task.title.toLowerCase().includes(searchTitle.toLowerCase())
-    );
-    if (filteredTasks.length > 0) {
-      renderTasks(filteredTasks);
-    } else {
-      showToastMessage("No tasks found matching the search.");
-    }
-  } else {
-    renderTasks(tasks);
-  }
+  // Sanitize and retrieve the input value
+  const searchTitle = sanitizeInput($searchInput.value.trim());
+  // Clear the input field
   $searchInput.value = "";
+  // Use early return to handle empty search scenario
+  if (!searchTitle) {
+    renderTasks(tasks);
+    return;
+  }
+  // Filter tasks based on the sanitized input
+  const filteredTasks = tasks.filter((task) =>
+    task.title.toLowerCase().includes(searchTitle.toLowerCase())
+  );
+  // Render based on the filtering result
+  if (filteredTasks.length > 0) {
+    renderTasks(filteredTasks);
+  } else {
+    showToastMessage("No tasks found matching the search.");
+  }
 };
 
 const deleteTask = (taskId) => {
