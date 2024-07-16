@@ -28,7 +28,7 @@ const addButtonHandler = () => {
   }
 };
 
-const searchButtonHandler = () => {
+const handleSearchTasks = () => {
   // Sanitize and retrieve the input value
   const searchTitle = sanitizeInput($searchInput.value.trim());
   // Clear the input field
@@ -124,4 +124,4 @@ $taskInput.addEventListener("input", () => {
 });
 
 $addButton.addEventListener("click", addButtonHandler);
-$searchButton.addEventListener("click", searchButtonHandler);
+$searchButton.addEventListener("click", handleSearchTasks);
