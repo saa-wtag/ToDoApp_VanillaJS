@@ -22,9 +22,9 @@ import { MESSAGES } from "./const.js";
 let tasks = [];
 let isVisible = false;
 
-const addButtonHandler = (container) => {
+const handleAddTask = (container) => {
   isVisible = !isVisible;
-  const taskTitle = sanitizeInput(document.getElementById("task-input").value);
+  const taskTitle = sanitizeInput(document.getElementById("taskInput").value);
 
   if (taskTitle) {
     const overlay = showSpinnerOverlay(container);
@@ -38,12 +38,12 @@ const addButtonHandler = (container) => {
   }
 };
 
-const createButtonHandler = () => {
+const handleTaskView = () => {
   isVisible = !isVisible;
   $taskListContainer.style.display = "grid";
   $noTask.style.display = "none";
 
-  toggleInputContainer(isVisible, addButtonHandler);
+  toggleInputContainer(isVisible, handleAddTask);
   if (!isVisible) renderTasks(tasks);
 };
 
@@ -150,6 +150,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }, 1000);
 });
 
-$noTask.addEventListener("click", createButtonHandler);
-$createButton.addEventListener("click", createButtonHandler);
+$noTask.addEventListener("click", handleTaskView);
+$createButton.addEventListener("click", handleTaskView);
 $searchButton.addEventListener("click", searchButtonHandler);
