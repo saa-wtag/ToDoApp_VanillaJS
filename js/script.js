@@ -5,7 +5,6 @@ import {
   $splash,
   $noTask,
   $taskListContainer,
-  $loadMore,
   $createButton,
 } from "./elements.js";
 import {
@@ -141,7 +140,6 @@ const renderTasks = (tasksToRender = tasks) => {
 
 const renderNoTasks = () => {
   $taskListContainer.style.display = "none";
-  $loadMore.style.display = "none";
 };
 
 document.addEventListener("DOMContentLoaded", function () {
