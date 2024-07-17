@@ -30,9 +30,9 @@ let filteredOrSearchableTasks = [];
 let tasksDisplayed = 0;
 const tasksPerPage = 9;
 
-const addButtonHandler = (container) => {
+const handleAddTask = (container) => {
   isVisible = !isVisible;
-  const taskTitle = sanitizeInput(document.getElementById("task-input").value);
+  const taskTitle = sanitizeInput(document.getElementById("taskInput").value);
 
   if (taskTitle) {
     const overlay = showSpinnerOverlay(container);
@@ -46,25 +46,40 @@ const addButtonHandler = (container) => {
   }
 };
 
-const createButtonHandler = () => {
+const handleTaskView = () => {
   isVisible = !isVisible;
   $taskListContainer.style.display = "grid";
   $noTask.style.display = "none";
 
-  toggleInputContainer(isVisible, addButtonHandler);
+  toggleInputContainer(isVisible, handleAddTask);
   if (!isVisible)
     renderTasks(
       filteredOrSearchableTasks.length ? filteredOrSearchableTasks : tasks
     );
 };
 
-const searchButtonHandler = () => {
+const handleSearchTasks = () => {
+  // Sanitize and retrieve the input value
   const searchTitle = sanitizeInput($searchInput.value).toLowerCase();
   const overlay = showSpinnerOverlay($taskListContainer);
-
   setTimeout(() => {
-    filterTasks(searchTitle);
+    // Use early return to handle empty search scenario
+    if (!searchTitle) {
+      renderTasks(tasks);
+      return;
+    }
+    // Filter tasks based on the sanitized input
+    const filteredTasks = tasks.filter((task) =>
+      task.title.toLowerCase().includes(searchTitle.toLowerCase())
+    );
+    // Render based on the filtering result
+    if (filteredTasks.length > 0) {
+      renderTasks(filteredTasks);
+    } else {
+      showToastMessage("No tasks found matching the search.");
+    }
     hideSpinnerOverlay(overlay);
+    // Clear the input field
     $searchInput.value = "";
   }, 1000);
 };
@@ -112,6 +127,7 @@ const completeTask = (taskId, container) => {
     task.done = true;
     task.isEditing = false;
     renderTasks(tasks);
+    hideSpinnerOverlay(overlay);
     hideSpinnerOverlay(overlay);
   }, 1000);
 };
@@ -169,9 +185,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 1000);
 });
 
-$noTask.addEventListener("click", createButtonHandler);
-$createButton.addEventListener("click", createButtonHandler);
-$searchButton.addEventListener("click", searchButtonHandler);
+$noTask.addEventListener("click", handleTaskView);
+$createButton.addEventListener("click", handleTaskView);
+$searchButton.addEventListener("click", handleSearchTasks);
 
 $filterAllButton.addEventListener("click", (event) => {
   currentFilter = "all";

@@ -31,13 +31,13 @@ const createElement = (type, classes = []) => {
   return element;
 };
 
-export const toggleInputContainer = (isVisible, addButtonHandler) => {
+export const toggleInputContainer = (isVisible, handleAddTask) => {
   if (isVisible) {
     $taskListContainer.style.display = "grid";
-    const inputContainer = createTaskElement(addButtonHandler);
+    const inputContainer = createTaskElement(handleAddTask);
     $taskListContainer.appendChild(inputContainer);
   } else {
-    const inputContainer = document.getElementById("input-container");
+    const inputContainer = document.getElementById("inputContainer");
     if (inputContainer) inputContainer.remove();
   }
 };
@@ -45,7 +45,10 @@ export const toggleInputContainer = (isVisible, addButtonHandler) => {
 const createButton = (id, imgSrc, alt, handler) => {
   const button = document.createElement("button");
   button.classList.add(...CARD_BUTTON_CLASSES);
-  button.id = id;
+  button.classList.add(id);
+  // Convert class name from kebab-case to camelCase
+  const camelCaseClassName = id.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+  button.id = camelCaseClassName;
   if (imgSrc) {
     const img = document.createElement("img");
     img.src = imgSrc;
@@ -58,14 +61,16 @@ const createButton = (id, imgSrc, alt, handler) => {
   return button;
 };
 
-export const createTaskElement = (addButtonHandler) => {
+export const createTaskElement = (handleAddTask) => {
   const taskContainer = document.createElement("div");
   taskContainer.classList.add(...TASK_CONTAINER_CLASSES);
-  taskContainer.id = "input-container";
+  taskContainer.id = "inputContainer";
+  taskContainer.classList.add("input-container");
 
   const taskInputDiv = document.createElement("div");
   const taskInput = document.createElement("textarea");
-  taskInput.id = "task-input";
+  taskInput.classList.add("task-input");
+  taskInput.id = "taskInput";
   taskInputDiv.appendChild(taskInput);
 
   const taskButtonsDiv = document.createElement("div");
@@ -73,11 +78,12 @@ export const createTaskElement = (addButtonHandler) => {
 
   const addButton = document.createElement("button");
   addButton.classList.add(...FILTER_BUTTON_CLASSES);
-  addButton.id = "add-button";
+  addButton.classList.add("add-button");
+  addButton.id = "addButton";
   addButton.textContent = "Add Task";
   addButton.addEventListener("click", (event) => {
     event.preventDefault();
-    addButtonHandler(taskContainer);
+    handleAddTask(taskContainer);
   });
 
   const deleteButton = createButton(
@@ -117,8 +123,9 @@ export const containerBuilder = (
     task.isEditing = false;
     const doneAt = createElement("p");
     doneAt.textContent = `Completed in ${calculateCompletionTime(task)} days`;
-    doneAt.id = "task-done-at";
-    taskButtons.id = "done-task-buttons";
+    doneAt.classList.add("task-done-at");
+    doneAt.id = "taskDoneAt";
+    taskButtons.classList.add("done-task-buttons");
     taskButtons.prepend(doneAt);
 
     taskButtons.prepend(
@@ -157,7 +164,8 @@ export const containerBuilder = (
 
 const buildEditModeContent = (task) => {
   const taskInput = createElement("textarea");
-  taskInput.id = "task-input";
+  taskInput.classList.add("task-input");
+  taskInput.id = "taskInput";
   taskInput.value = task.title;
   return [taskInput];
 };
@@ -165,10 +173,14 @@ const buildEditModeContent = (task) => {
 const buildNormalModeContent = (task) => {
   const taskTitle = createElement("p", TASK_TITLE_CLASSES);
   taskTitle.textContent = task.title;
-  if (task.done) taskTitle.id = "done-title";
+  if (task.done) {
+    taskTitle.id = "doneTitle";
+    taskTitle.classList.add("done-title");
+  }
 
   const createdAt = createElement("p");
-  createdAt.id = "task-created-at";
+  createdAt.classList.add("task-created-at");
+  createdAt.id = "taskCreatedAt";
   createdAt.textContent = `Created At: ${formatDate(task.id)}`;
   return [taskTitle, createdAt];
 };
@@ -196,7 +208,7 @@ export const showSpinnerOverlay = (targetContainer) => {
   const spinnerImage = document.createElement("img");
   spinnerImage.src = ICONS.SPINNER;
   spinnerImage.alt = "Loading...";
-  spinnerImage.id = "spinner";
+  spinnerImage.classList.add("spinner");
 
   overlay.appendChild(spinnerImage);
   targetContainer.style.position = "relative";
