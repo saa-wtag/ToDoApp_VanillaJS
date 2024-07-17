@@ -47,23 +47,28 @@ const handleTaskView = () => {
   if (!isVisible) renderTasks(tasks);
 };
 
-const searchButtonHandler = () => {
-  const searchTitle = sanitizeInput($searchInput.value);
+const handleSearchTasks = () => {
+  // Sanitize and retrieve the input value
+  const searchTitle = sanitizeInput($searchInput.value.trim());
   const overlay = showSpinnerOverlay($taskListContainer);
   setTimeout(() => {
-    if (searchTitle) {
-      const filteredTasks = tasks.filter((task) =>
-        task.title.toLowerCase().includes(searchTitle.toLowerCase())
-      );
-      if (filteredTasks.length > 0) {
-        renderTasks(filteredTasks);
-      } else {
-        showToastMessage(MESSAGES.NO_TASKS_FOUND);
-      }
-    } else {
+    // Use early return to handle empty search scenario
+    if (!searchTitle) {
       renderTasks(tasks);
+      return;
+    }
+    // Filter tasks based on the sanitized input
+    const filteredTasks = tasks.filter((task) =>
+      task.title.toLowerCase().includes(searchTitle.toLowerCase())
+    );
+    // Render based on the filtering result
+    if (filteredTasks.length > 0) {
+      renderTasks(filteredTasks);
+    } else {
+      showToastMessage("No tasks found matching the search.");
     }
     hideSpinnerOverlay(overlay);
+    // Clear the input field
     $searchInput.value = "";
   }, 1000);
 };
@@ -152,4 +157,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
 $noTask.addEventListener("click", handleTaskView);
 $createButton.addEventListener("click", handleTaskView);
-$searchButton.addEventListener("click", searchButtonHandler);
+$searchButton.addEventListener("click", handleSearchTasks);
