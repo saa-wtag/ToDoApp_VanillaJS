@@ -1,4 +1,3 @@
-/* Import constants */
 @import "constants.css";
 
 body {
@@ -63,12 +62,12 @@ body {
 }
 
 .toast-container {
-  border: 1px solid var(--light-gray);
+  border: 1px solid var(--white);
   height: var(--toast-height);
   width: var(--toast-width);
   border-radius: var(--border-radius);
   background-color: var(--background-color);
-  color: var(--text-color);
+  color: var(--toast-text-color);
   display: flex;
   align-items: center;
   justify-content: center;
