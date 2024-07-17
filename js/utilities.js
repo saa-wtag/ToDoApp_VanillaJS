@@ -57,6 +57,9 @@ const createButton = (id, imgSrc, alt, handler) => {
   } else {
     button.textContent = alt;
   }
+  if (id === "save-button") {
+    button.style.border = "1px solid #e9e9ed";
+  }
   button.addEventListener("click", handler);
   return button;
 };

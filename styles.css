@@ -1,4 +1,4 @@
-@import "constants.css";
+@import "variables.css";
 
 body {
   margin: 0;
@@ -123,16 +123,20 @@ body {
 }
 
 .save-button {
+  border: 1px solid var(--light-gray);
+  margin-right: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--primary-color);
-  color: var(--inactive-button-color);
-  border: none;
   border-radius: var(--border-radius);
   padding: 10px 20px;
   cursor: pointer;
+  height: 2.4rem;
   font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-regular);
+  padding: 0rem 0.7rem;
+  text-align: center;
+  color: var(--text-color);
 }
 
 .create-button img {
@@ -189,10 +193,7 @@ body {
 .task-title {
   margin: 0rem;
   border-radius: var(--border-radius);
-  height: var(
-    --task-title-height,
-    5rem
-  ); /* Added a default value for task-title-height */
+  height: var(--task-title-height, 5rem);
   width: 97%;
   font-size: var(--font-size-large);
   font-weight: var(--font-weight-bold);
