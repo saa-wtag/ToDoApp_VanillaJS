@@ -21,14 +21,13 @@ import {
   formatDate,
   setActiveButton,
 } from "./utilities.js";
-import { MESSAGES } from "./const.js";
+import { MESSAGES, TASK_PER_PAGE } from "./const.js";
 
 let tasks = [];
 let isVisible = false;
 let currentFilter = "all";
 let filteredOrSearchableTasks = [];
 let tasksDisplayed = 0;
-const tasksPerPage = 9;
 
 const handleAddTask = (container) => {
   isVisible = !isVisible;
@@ -141,7 +140,7 @@ const createTask = (taskTitle) => {
     done: false,
   };
   tasks.unshift(task);
-  tasksDisplayed = Math.min(tasksPerPage, tasks.length);
+  tasksDisplayed = Math.min(TASK_PER_PAGE, tasks.length);
   filterTasks();
 };
 
@@ -161,7 +160,7 @@ const renderTasks = (tasksToRender) => {
 
 $loadMore.addEventListener("click", () => {
   tasksDisplayed = Math.min(
-    tasksDisplayed + tasksPerPage,
+    tasksDisplayed + TASK_PER_PAGE,
     filteredOrSearchableTasks.length || tasks.length
   );
   renderTasks(
