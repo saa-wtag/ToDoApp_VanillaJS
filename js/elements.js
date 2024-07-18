@@ -10,7 +10,6 @@ export const $toastBox = document.getElementById("toastContainer");
 export const $splash = document.getElementById("splashScreen");
 export const $noTask = document.getElementById("centeredImage");
 export const $taskListContainer = document.getElementById("tasksContainer");
-export const $loadMore = document.getElementById("loadMoreButton");
 export const $createButton = document.getElementById("createButton");
 export const $taskAddBox = document.getElementById("inputContainer");
 export const $filterAllButton = document.getElementById("filterAll");

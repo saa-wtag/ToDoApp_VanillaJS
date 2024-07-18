@@ -156,16 +156,6 @@ body {
   margin-right: 1rem;
 }
 
-.load-more-button {
-  background-color: var(--secondary-color);
-  color: var(--inactive-button-color);
-  border-radius: 4px;
-  padding: 0.4rem 1rem;
-  display: block;
-  margin: 0 auto;
-  margin-top: 0.4%;
-}
-
 .filters-button {
   height: 2.4rem;
   font-size: var(--font-size-medium);

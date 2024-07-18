@@ -5,7 +5,6 @@ import {
   $splash,
   $noTask,
   $taskListContainer,
-  $loadMore,
   $createButton,
   $filterAllButton,
   $filterIncompleteButton,
@@ -170,7 +169,6 @@ $loadMore.addEventListener("click", () => {
 
 const renderNoTasks = () => {
   $taskListContainer.style.display = "none";
-  $loadMore.style.display = "none";
 };
 
 document.addEventListener("DOMContentLoaded", () => {
