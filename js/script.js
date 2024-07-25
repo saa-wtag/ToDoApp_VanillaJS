@@ -5,7 +5,6 @@ import {
   $splash,
   $noTask,
   $taskListContainer,
-  $loadMore,
   $createButton,
   $filterAllButton,
   $filterIncompleteButton,
@@ -21,16 +20,17 @@ import {
   formatDate,
   setActiveButton,
 } from "./utilities.js";
-import { MESSAGES } from "./const.js";
+import { MESSAGES, TASK_PER_PAGE } from "./const.js";
 
 let tasks = [];
 let isVisible = false;
 let currentFilter = "all";
-let filteredOrSearchAbleTasks = [];
+let filteredOrSearchableTasks = [];
+let tasksDisplayed = 0;
 
-const addButtonHandler = (container) => {
+const handleAddTask = (container) => {
   isVisible = !isVisible;
-  const taskTitle = sanitizeInput(document.getElementById("task-input").value);
+  const taskTitle = sanitizeInput(document.getElementById("taskInput").value);
 
   if (taskTitle) {
     const overlay = showSpinnerOverlay(container);
@@ -44,50 +44,40 @@ const addButtonHandler = (container) => {
   }
 };
 
-const createButtonHandler = () => {
+const handleTaskView = () => {
   isVisible = !isVisible;
   $taskListContainer.style.display = "grid";
   $noTask.style.display = "none";
 
-  toggleInputContainer(isVisible, addButtonHandler);
-  if (!isVisible) renderTasks(tasks);
+  toggleInputContainer(isVisible, handleAddTask);
+  if (!isVisible)
+    renderTasks(
+      filteredOrSearchableTasks.length ? filteredOrSearchableTasks : tasks
+    );
 };
 
-const searchButtonHandler = () => {
+const handleSearchTasks = () => {
+  // Sanitize and retrieve the input value
   const searchTitle = sanitizeInput($searchInput.value).toLowerCase();
   const overlay = showSpinnerOverlay($taskListContainer);
-
   setTimeout(() => {
-    filteredOrSearchAbleTasks = [...tasks];
-
-    if (searchTitle) {
-      filteredOrSearchAbleTasks = filteredOrSearchAbleTasks.filter((task) =>
-        task.title.toLowerCase().includes(searchTitle)
-      );
+    // Use early return to handle empty search scenario
+    if (!searchTitle) {
+      renderTasks(tasks);
+      return;
     }
-
-    switch (currentFilter) {
-      case "incomplete":
-        filteredOrSearchAbleTasks = filteredOrSearchAbleTasks.filter(
-          (task) => !task.done
-        );
-        break;
-      case "complete":
-        filteredOrSearchAbleTasks = filteredOrSearchAbleTasks.filter(
-          (task) => task.done
-        );
-        break;
-      default:
-        break;
-    }
-
-    if (filteredOrSearchAbleTasks.length > 0) {
-      renderTasks(filteredOrSearchAbleTasks);
+    // Filter tasks based on the sanitized input
+    const filteredTasks = tasks.filter((task) =>
+      task.title.toLowerCase().includes(searchTitle.toLowerCase())
+    );
+    // Render based on the filtering result
+    if (filteredTasks.length > 0) {
+      renderTasks(filteredTasks);
     } else {
-      showToastMessage(MESSAGES.NO_TASKS_FOUND);
+      showToastMessage("No tasks found matching the search.");
     }
-
     hideSpinnerOverlay(overlay);
+    // Clear the input field
     $searchInput.value = "";
   }, 1000);
 };
@@ -130,6 +120,7 @@ const completeTask = (taskId, container) => {
     task.isEditing = false;
     renderTasks(tasks);
     hideSpinnerOverlay(overlay);
+    hideSpinnerOverlay(overlay);
   }, 1000);
 };
 
@@ -142,7 +133,8 @@ const createTask = (taskTitle) => {
     done: false,
   };
   tasks.unshift(task);
-  renderTasks(tasks);
+  tasksDisplayed = Math.min(TASK_PER_PAGE, tasks.length);
+  filterTasks();
 };
 
 const renderTasks = (tasksToRender = tasks) => {
@@ -151,16 +143,23 @@ const renderTasks = (tasksToRender = tasks) => {
     containerBuilder(task, completeTask, editTask, deleteTask, updateTask);
   });
 
-  if (tasksToRender.length === 0) {
-    $noTask.style.display = "flex";
-  } else {
-    $noTask.style.display = "none";
-  }
+  $noTask.style.display = tasksToRender.length === 0 ? "flex" : "none";
+  $loadMore.style.display =
+    tasksToRender.length > tasksDisplayed ? "block" : "none";
 };
+
+$loadMore.addEventListener("click", () => {
+  tasksDisplayed = Math.min(
+    tasksDisplayed + TASK_PER_PAGE,
+    filteredOrSearchableTasks.length || tasks.length
+  );
+  renderTasks(
+    filteredOrSearchableTasks.length ? filteredOrSearchableTasks : tasks
+  );
+});
 
 const renderNoTasks = () => {
   $taskListContainer.style.display = "none";
-  $loadMore.style.display = "none";
 };
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -174,9 +173,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }, 1000);
 });
 
-$noTask.addEventListener("click", createButtonHandler);
-$createButton.addEventListener("click", createButtonHandler);
-$searchButton.addEventListener("click", searchButtonHandler);
+$noTask.addEventListener("click", handleTaskView);
+$createButton.addEventListener("click", handleTaskView);
+$searchButton.addEventListener("click", handleSearchTasks);
 
 $filterAllButton.addEventListener("click", (event) => {
   currentFilter = "all";

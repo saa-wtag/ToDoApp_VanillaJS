@@ -11,7 +11,7 @@
     />
   </head>
   <body>
-    <div class="splash" id="splash-screen">
+    <div class="splash" id="splashScreen">
       <img src="./icons/logo.svg" />
     </div>
     <div class="main-container" id="container" hidden>
@@ -21,15 +21,15 @@
             <img src="./icons/logo.svg" alt="Todos" />
           </div>
           <div class="search-icon">
-            <input type="text" id="search-input" />
-            <button class="button" id="search-button">
+            <input type="text" class="search-input" id="searchInput" />
+            <button class="button" id="searchButton">
               <img src="./icons/search-icon.svg" alt="search" />
             </button>
           </div>
         </div>
       </header>
-      <div class="body-container" id="body-container">
-        <div class="toast-container" id="toast-container">
+      <div class="body-container" id="bodyContainer">
+        <div class="toast-container" id="toastContainer">
           <p id="message"></p>
         </div>
         <div id="top-title">
@@ -37,28 +37,25 @@
         </div>
         <div class="top-buttons-container">
           <div class="left-buttons">
-            <button id="create-button">
-              <img src="./icons/plus-icon.svg" alt="Plus Icon" />
+            <button class="create-button" id="createButton">
+              <img src="./icons/plus-icon.svg" alt="plus" />
               Create
             </button>
           </div>
           <div class="right-buttons">
-            <button class="filters-button" id="filter-all">All</button>
-            <button class="filters-button" id="filter-incomplete">
+            <button class="filters-button" id="filterAll">All</button>
+            <button class="filters-button" id="filterIncomplete">
               Incomplete
             </button>
-            <button class="filters-button" id="filter-complete">
+            <button class="filters-button" id="filterComplete">
               Complete
             </button>
           </div>
         </div>
-        <div id="centered-image">
+        <div class="centered-image" id="centeredImage">
           <img src="./icons/no-task-icon.svg" alt="Add Task" />
         </div>
-        <div class="tasks-container" id="tasks-container"></div>
-        <div>
-          <button id="load-more-button">Load More</button>
-        </div>
+        <div class="tasks-container" id="tasksContainer"></div>
       </div>
     </div>
     <script type="module" src="./js/script.js"></script>

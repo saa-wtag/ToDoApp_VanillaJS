@@ -1,14 +1,17 @@
+@import "variables.css";
+
 body {
   margin: 0;
   padding: 0;
-  font-family: "Roboto", sans-serif;
+  font-family: var(--font-family);
 }
 
 .button {
-  background: #ffffff;
-  color: #32394b;
+  background-color: var(--background-color);
+  color: var(--text-color);
   border: none;
 }
+
 .splash {
   width: 100%;
   height: 100%;
@@ -22,56 +25,65 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #ffffff;
+  background-color: var(--background-color);
   padding: 0.8rem 12rem 0.8rem;
-  border: 2px solid #dde2ff;
+  border: 2px solid var(--border-color);
 }
+
 .body-container {
   padding: 0.5rem 12rem 0.5rem;
 }
+
 .top-buttons-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin: 1rem 0rem;
 }
+
 .tasks-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: var(--grid-gap);
   grid-auto-flow: dense;
 }
-#input-container {
+
+.input-container {
   grid-column: 1 / span 1;
   grid-row: 1;
 }
+
 .task-container {
-  height: 9rem;
-  width: 90%;
+  height: var(--task-height);
+  width: var(--task-width);
   padding: 1.5rem;
-  border-radius: 0.4rem;
-  border: 1.5px solid #dde2ff;
+  border-radius: var(--border-radius);
+  border: var(--border-width) solid var(--border-color);
 }
+
 .toast-container {
-  border: 1px solid #fcfcfc;
-  height: 3rem;
-  width: 25rem;
-  border-radius: 0.4rem;
-  background-color: #ffffff;
-  color: #ffffff;
+  border: 1px solid var(--white);
+  height: var(--toast-height);
+  width: var(--toast-width);
+  border-radius: var(--border-radius);
+  background-color: var(--background-color);
+  color: var(--toast-text-color);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0.5rem auto;
 }
+
 .top-icon img,
 .search-icon img {
   max-width: 100%;
   max-height: 100%;
 }
+
 .top-icon {
   width: 8rem;
 }
+
 .search-icon img {
   width: 1.5rem;
   height: 1.5rem;
@@ -80,126 +92,135 @@ body {
   object-fit: contain;
 }
 
-#search-input {
-  border-radius: 0.3rem;
-  border: 0.5px groove #d1d8ff;
-  height: 0.65rem;
+.search-input {
+  border-radius: var(--border-radius);
+  border: 0.5px groove var(--light-gray);
+  height: var(--search-input-height);
   padding: 0.75rem 0.5rem;
-  width: 30rem;
+  width: var(--search-input-width);
 }
-#task-input {
-  border-radius: 0.3rem;
-  border: 3px solid #d1d8ff;
-  height: 6rem;
+
+.task-input {
+  border-radius: var(--border-radius);
+  border: 3px solid var(--border-color);
+  height: var(--task-input-height);
   width: 97%;
-  font-size: xx-large;
+  font-size: var(--font-size-large);
   resize: none;
 }
 
-#create-button {
+.create-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #7a8dfd;
-  color: #ffffff;
+  background-color: var(--primary-color);
+  color: var(--inactive-button-color);
   border: none;
-  border-radius: 0.3rem;
+  border-radius: var(--border-radius);
   padding: 10px 20px;
   cursor: pointer;
-  font-size: 16px;
-}
-#save-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #7a8dfd;
-  color: #ffffff;
-  border: none;
-  border-radius: 0.3rem;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 16px;
+  font-size: var(--font-size-medium);
 }
 
-#create-button img {
+.save-button {
+  border: 1px solid var(--light-gray);
+  margin-right: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius);
+  padding: 10px 20px;
+  cursor: pointer;
+  height: 2.4rem;
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-regular);
+  padding: 0rem 0.7rem;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.create-button img {
   width: 16px;
   height: 16px;
   margin-right: 8px;
 }
+
 .card-buttons {
   border: none;
-  background: #ffffff;
+  background: var(--background-color);
   margin-right: 0.5rem;
 }
-#add-button {
-  color: #000000;
+
+.add-button {
+  color: var(--primary-color);
   margin-right: 1rem;
 }
-#load-more-button {
-  background-color: #32394b;
-  color: #ffffff;
-  border-radius: 4px;
-  padding: 0.4rem 1rem;
-  display: block;
-  margin: 0 auto;
-  margin-top: 0.4%;
-}
+
 .filters-button {
   height: 2.4rem;
-  font-size: 16px;
-  font-weight: 300;
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-regular);
   padding: 0rem 0.7rem;
   text-align: center;
-  color: #020202;
-  background-color: #ffffff;
-  border: 1px solid #e9e9ed;
-  border-radius: 0.4rem;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  border: 1px solid var(--light-gray);
+  border-radius: var(--border-radius);
 }
+
 .filters-button.active {
-  background-color: #7a8dfd;
+  background-color: var(--primary-color);
   color: white;
 }
+
 .task-buttons {
   display: flex;
   align-items: center;
   justify-content: left;
   padding-top: 0.5rem;
 }
+
 .task-title {
   margin: 0rem;
-  border-radius: 0.3rem;
-  height: 5rem;
+  border-radius: var(--border-radius);
+  height: var(--task-title-height, 5rem);
   width: 97%;
-  font-size: xx-large;
-  font-weight: 500;
+  font-size: var(--font-size-large);
+  font-weight: var(--font-weight-bold);
   resize: none;
 }
-#done-title {
-  color: #0bc375;
+
+.done-title {
+  color: var(--success-color);
   text-decoration: line-through;
 }
-#task-created-at {
-  color: #a4a1a1;
+
+.task-created-at {
+  color: var(--light-text-color);
   padding: 0rem;
   margin: 0.5rem 0rem;
 }
-#task-done-at {
-  background: #7a8dfd;
-  color: #ffffff;
+
+.task-done-at {
+  background: var(--primary-color);
+  color: var(--inactive-button-color);
   font-size: small;
   border-radius: 4px;
   padding: 0.3rem 0.8rem;
   margin: 0rem;
 }
-#done-task-buttons {
+
+.done-task-buttons {
   justify-content: space-between;
 }
-#centered-image {
+
+.centered-image {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 500px;
 }
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -208,6 +229,7 @@ body {
     transform: rotate(360deg);
   }
 }
+
 .overlay {
   position: absolute;
   top: 0;
@@ -221,7 +243,7 @@ body {
   align-items: center;
 }
 
-#spinner {
+.spinner {
   width: 50px;
   height: 50px;
   border-radius: 50%;
