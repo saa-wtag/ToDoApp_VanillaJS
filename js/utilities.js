@@ -240,4 +240,3 @@ export const setActiveButton = (button) => {
   });
   button.classList.add("active");
 };
-
