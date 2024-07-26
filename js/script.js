@@ -26,6 +26,10 @@ let isTaskInputVisible = false;
 let currentFilter = "all";
 let filteredOrSearchableTasks = [];
 
+const filteredSearchableTasksOrTasks = filteredOrSearchableTasks.length
+  ? filteredOrSearchableTasks
+  : tasks;
+
 const handleAddTask = (container) => {
   isTaskInputVisible = !isTaskInputVisible;
   const taskTitle = sanitizeInput(document.getElementById("taskInput").value);
@@ -46,16 +50,13 @@ const toggleTaskInput = () => {
   $noTask.style.display = "none";
 
   toggleInputContainer(isTaskInputVisible, handleAddTask);
-  if (!isTaskInputVisible)
-    renderTasks(
-      filteredOrSearchableTasks.length ? filteredOrSearchableTasks : tasks
-    );
+  if (!isTaskInputVisible) renderTasks(filteredSearchableTasksOrTasks);
 };
 
 const handleSearchTasks = () => {
   const searchTitle = sanitizeInput($searchInput.value.trim()).toLowerCase();
   handleSpinner($taskListContainer, () => {
-    filterTasks(searchTitle); 
+    filterTasks(searchTitle);
     if (filteredOrSearchableTasks.length === 0) {
       showToastMessage("No tasks found matching the search.");
     }
@@ -66,15 +67,13 @@ const handleSearchTasks = () => {
 const deleteTask = (taskId, container) => {
   handleSpinner(container, () => {
     tasks = tasks.filter((task) => task.id !== taskId);
-    filterTasks(); 
+    filterTasks();
   });
 };
 
 const editTask = (task) => {
   task.isEditing = true;
-  renderTasks(
-    filteredOrSearchableTasks.length ? filteredOrSearchableTasks : tasks
-  );
+  renderTasks(filteredSearchableTasksOrTasks);
 };
 
 const updateTask = (task, container, newTitle) => {
@@ -82,7 +81,7 @@ const updateTask = (task, container, newTitle) => {
     handleSpinner(container, () => {
       task.title = newTitle;
       task.isEditing = false;
-      filterTasks(); 
+      filterTasks();
     });
   }
 };
@@ -93,7 +92,7 @@ const completeTask = (taskId, container) => {
     if (task) {
       task.done = true;
       task.isEditing = false;
-      filterTasks(); 
+      filterTasks();
     }
   });
 };
@@ -107,8 +106,8 @@ const createTask = (taskTitle) => {
     done: false,
   };
   tasks.unshift(task);
-  filteredOrSearchableTasks = tasks; 
-  filterTasks(); 
+  filteredOrSearchableTasks = tasks;
+  filterTasks();
 };
 
 const filterTasks = (searchTitle = "") => {
