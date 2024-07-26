@@ -32,10 +32,6 @@ const filteredSearchableTasksOrTasks = filteredOrSearchableTasks.length
   ? filteredOrSearchableTasks
   : tasks;
 
-const filteredSearchableTasksOrTasks = filteredOrSearchableTasks.length
-  ? filteredOrSearchableTasks
-  : tasks;
-
 const handleAddTask = (container) => {
   isTaskInputVisible = !isTaskInputVisible;
   const taskTitle = sanitizeInput(document.getElementById("taskInput").value);
@@ -113,10 +109,7 @@ const createTask = (taskTitle) => {
   };
   tasks.unshift(task);
   filteredOrSearchableTasks = tasks;
-<<<<<<< HEAD
   tasksDisplayed = TASK_PER_PAGE;
-=======
->>>>>>> Filter-Todo
   filterTasks();
 };
 
