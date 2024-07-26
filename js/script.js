@@ -191,4 +191,3 @@ $filterCompleteButton.addEventListener("click", (event) => {
   filterTasks();
   setActiveButton(event.target);
 });
-
