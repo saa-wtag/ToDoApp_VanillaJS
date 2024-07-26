@@ -15,10 +15,9 @@ import {
   sanitizeInput,
   toggleInputContainer,
   containerBuilder,
-  showSpinnerOverlay,
-  hideSpinnerOverlay,
   formatDate,
   setActiveButton,
+  handleSpinner,
 } from "./utilities.js";
 import { MESSAGES } from "./const.js";
 
@@ -26,15 +25,6 @@ let tasks = [];
 let isTaskInputVisible = false;
 let currentFilter = "all";
 let filteredOrSearchableTasks = [];
-let tasksDisplayed = 0;
-
-const handleSpinner = (container, callback) => {
-  const overlay = showSpinnerOverlay(container);
-  setTimeout(() => {
-    callback();
-    hideSpinnerOverlay(overlay);
-  }, 1000);
-};
 
 const handleAddTask = (container) => {
   isTaskInputVisible = !isTaskInputVisible;
@@ -65,22 +55,10 @@ const toggleTaskInput = () => {
 const handleSearchTasks = () => {
   const searchTitle = sanitizeInput($searchInput.value.trim()).toLowerCase();
   handleSpinner($taskListContainer, () => {
-    if (!searchTitle) {
-      filterTasks();
-      return;
-    }
-
-    const filteredTasks = tasks.filter((task) =>
-      task.title.toLowerCase().includes(searchTitle)
-    );
-    filteredOrSearchableTasks = filteredTasks;
-    tasksDisplayed = filteredTasks.length;
-    renderTasks(filteredTasks);
-
-    if (filteredTasks.length === 0) {
+    filterTasks(searchTitle); // Directly use searchTitle for filtering
+    if (filteredOrSearchableTasks.length === 0) {
       showToastMessage("No tasks found matching the search.");
     }
-
     $searchInput.value = "";
   });
 };
@@ -88,7 +66,7 @@ const handleSearchTasks = () => {
 const deleteTask = (taskId, container) => {
   handleSpinner(container, () => {
     tasks = tasks.filter((task) => task.id !== taskId);
-    filterTasks();
+    filterTasks(); // Reapply current filter after deletion
   });
 };
 
@@ -104,7 +82,7 @@ const updateTask = (task, container, newTitle) => {
     handleSpinner(container, () => {
       task.title = newTitle;
       task.isEditing = false;
-      filterTasks();
+      filterTasks(); // Reapply current filter after updating
     });
   }
 };
@@ -115,7 +93,7 @@ const completeTask = (taskId, container) => {
     if (task) {
       task.done = true;
       task.isEditing = false;
-      filterTasks();
+      filterTasks(); // Reapply current filter after marking as complete
     }
   });
 };
@@ -129,8 +107,8 @@ const createTask = (taskTitle) => {
     done: false,
   };
   tasks.unshift(task);
-  tasksDisplayed = tasks.length;
-  filterTasks();
+  filteredOrSearchableTasks = tasks; // Update filtered tasks after creation
+  filterTasks(); // Apply current filter
 };
 
 const filterTasks = (searchTitle = "") => {
@@ -147,15 +125,13 @@ const filterTasks = (searchTitle = "") => {
   }
 
   filteredOrSearchableTasks = filteredTasks;
-  tasksDisplayed = Math.min(tasksDisplayed, filteredTasks.length);
   renderTasks(filteredTasks);
 };
 
-const renderTasks = (tasksToRender = tasks) => {
+const renderTasks = (tasksToRender = filteredOrSearchableTasks) => {
   $taskListContainer.innerHTML = "";
 
-  const paginatedTasks = tasksToRender.slice(0, tasksDisplayed);
-  paginatedTasks.forEach((task) => {
+  tasksToRender.forEach((task) => {
     containerBuilder(task, completeTask, editTask, deleteTask, updateTask);
   });
 
@@ -198,7 +174,3 @@ $filterCompleteButton.addEventListener("click", (event) => {
   filterTasks();
   setActiveButton(event.target);
 });
-
-$noTask.addEventListener("click", toggleTaskInput);
-$createButton.addEventListener("click", toggleTaskInput);
-$searchButton.addEventListener("click", handleSearchTasks);

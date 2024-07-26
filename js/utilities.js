@@ -235,3 +235,10 @@ export const handleSpinner = (container, callback) => {
     hideSpinnerOverlay(overlay);
   }, 1000);
 };
+
+export const setActiveButton = (button) => {
+  document.querySelectorAll(".filters-button").forEach((btn) => {
+    btn.classList.remove("active");
+  });
+  button.classList.add("active");
+};
