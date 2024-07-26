@@ -28,6 +28,10 @@ let currentFilter = "all";
 let filteredOrSearchableTasks = [];
 let tasksDisplayed = TASK_PER_PAGE;
 
+const filteredSearchableTasksOrTasks = filteredOrSearchableTasks.length
+  ? filteredOrSearchableTasks
+  : tasks;
+
 const handleAddTask = (container) => {
   isTaskInputVisible = !isTaskInputVisible;
   const taskTitle = sanitizeInput(document.getElementById("taskInput").value);
@@ -48,10 +52,7 @@ const toggleTaskInput = () => {
   $noTask.style.display = "none";
 
   toggleInputContainer(isTaskInputVisible, handleAddTask);
-  if (!isTaskInputVisible)
-    renderTasks(
-      filteredOrSearchableTasks.length ? filteredOrSearchableTasks : tasks
-    );
+  if (!isTaskInputVisible) renderTasks(filteredSearchableTasksOrTasks);
 };
 
 const handleSearchTasks = () => {
@@ -74,9 +75,7 @@ const deleteTask = (taskId, container) => {
 
 const editTask = (task) => {
   task.isEditing = true;
-  renderTasks(
-    filteredOrSearchableTasks.length ? filteredOrSearchableTasks : tasks
-  );
+  renderTasks(filteredSearchableTasksOrTasks);
 };
 
 const updateTask = (task, container, newTitle) => {
@@ -150,9 +149,7 @@ $loadMore.addEventListener("click", () => {
     tasksDisplayed + TASK_PER_PAGE,
     filteredOrSearchableTasks.length || tasks.length
   );
-  renderTasks(
-    filteredOrSearchableTasks.length ? filteredOrSearchableTasks : tasks
-  );
+  renderTasks(filteredSearchableTasksOrTasks);
 });
 
 const renderNoTasks = () => {
