@@ -16,3 +16,4 @@ export const $filterAllButton = document.getElementById("filterAll");
 export const $filterIncompleteButton =
   document.getElementById("filterIncomplete");
 export const $filterCompleteButton = document.getElementById("filterComplete");
+export const $loadMore = document.getElementById("loadMoreButton");

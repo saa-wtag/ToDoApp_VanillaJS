@@ -249,3 +249,14 @@ body {
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
+
+.load-more-button {
+  background-color: var(--secondary-color);
+  color: var(--white);
+  border-radius: 4px;
+  padding: 0.4rem 1rem;
+  display: block;
+  margin: 0 auto;
+  margin-top: 0.4%;
+  display: none;
+}
