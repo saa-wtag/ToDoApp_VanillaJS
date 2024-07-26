@@ -26,7 +26,7 @@ let isTaskInputVisible = false;
 let currentFilter = "all";
 let filteredOrSearchableTasks = [];
 
-const filteredSearchableTasksOrTasks = filteredOrSearchableTasks.length
+const finalTaskList = filteredOrSearchableTasks.length
   ? filteredOrSearchableTasks
   : tasks;
 
@@ -50,7 +50,7 @@ const toggleTaskInput = () => {
   $noTask.style.display = "none";
 
   toggleInputContainer(isTaskInputVisible, handleAddTask);
-  if (!isTaskInputVisible) renderTasks(filteredSearchableTasksOrTasks);
+  if (!isTaskInputVisible) renderTasks(finalTaskList);
 };
 
 const handleSearchTasks = () => {
@@ -73,7 +73,7 @@ const deleteTask = (taskId, container) => {
 
 const editTask = (task) => {
   task.isEditing = true;
-  renderTasks(filteredSearchableTasksOrTasks);
+  renderTasks(finalTaskList);
 };
 
 const updateTask = (task, container, newTitle) => {
