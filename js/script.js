@@ -12,73 +12,61 @@ import {
   sanitizeInput,
   toggleInputContainer,
   containerBuilder,
-  showSpinnerOverlay,
-  hideSpinnerOverlay,
   formatDate,
+  handleSpinner,
 } from "./utilities.js";
 import { MESSAGES } from "./const.js";
 
 let tasks = [];
-let isVisible = false;
+let isTaskInputVisible = false;
 
 const handleAddTask = (container) => {
-  isVisible = !isVisible;
+  isTaskInputVisible = !isTaskInputVisible;
   const taskTitle = sanitizeInput(document.getElementById("taskInput").value);
 
   if (taskTitle) {
-    const overlay = showSpinnerOverlay(container);
-    setTimeout(() => {
+    handleSpinner(container, () => {
       createTask(taskTitle);
       showToastMessage(MESSAGES.SUCCESS, true);
-      hideSpinnerOverlay(overlay);
-    }, 1000);
+    });
   } else {
     showToastMessage(MESSAGES.ERROR, false);
   }
 };
 
-const handleTaskView = () => {
-  isVisible = !isVisible;
+const toggleTaskInput = () => {
+  isTaskInputVisible = !isTaskInputVisible;
   $taskListContainer.style.display = "grid";
   $noTask.style.display = "none";
 
-  toggleInputContainer(isVisible, handleAddTask);
-  if (!isVisible) renderTasks(tasks);
+  toggleInputContainer(isTaskInputVisible, handleAddTask);
+  if (!isTaskInputVisible) renderTasks(tasks);
 };
 
 const handleSearchTasks = () => {
-  // Sanitize and retrieve the input value
   const searchTitle = sanitizeInput($searchInput.value.trim());
-  const overlay = showSpinnerOverlay($taskListContainer);
-  setTimeout(() => {
-    // Use early return to handle empty search scenario
+  handleSpinner($taskListContainer, () => {
     if (!searchTitle) {
       renderTasks(tasks);
       return;
     }
-    // Filter tasks based on the sanitized input
     const filteredTasks = tasks.filter((task) =>
       task.title.toLowerCase().includes(searchTitle.toLowerCase())
     );
-    // Render based on the filtering result
     if (filteredTasks.length > 0) {
       renderTasks(filteredTasks);
     } else {
       showToastMessage("No tasks found matching the search.");
     }
-    hideSpinnerOverlay(overlay);
-    // Clear the input field
     $searchInput.value = "";
-  }, 1000);
+  });
 };
 
 const deleteTask = (taskId, container) => {
-  const overlay = showSpinnerOverlay(container);
-  setTimeout(() => {
+  handleSpinner(container, () => {
     tasks = tasks.filter((task) => task.id !== taskId);
     renderTasks(tasks);
-    hideSpinnerOverlay(overlay);
-  }, 1000);
+  });
 };
 
 const editTask = (task) => {
@@ -88,29 +76,23 @@ const editTask = (task) => {
 
 const updateTask = (task, container, newTitle) => {
   if (newTitle) {
-    const overlay = showSpinnerOverlay(container);
-    setTimeout(() => {
+    handleSpinner(container, () => {
       task.title = newTitle;
       task.isEditing = false;
       renderTasks(tasks);
-      hideSpinnerOverlay(overlay);
-    }, 1000);
+    });
   }
 };
 
 const completeTask = (taskId, container) => {
-  const overlay = showSpinnerOverlay(container);
-  setTimeout(() => {
+  handleSpinner(container, () => {
     const task = tasks.find((task) => task.id === taskId);
-    if (task === undefined) {
-      return;
+    if (task) {
+      task.done = true;
+      task.isEditing = false;
+      renderTasks(tasks);
     }
-
-    task.done = true;
-    task.isEditing = false;
-    renderTasks(tasks);
-    hideSpinnerOverlay(overlay);
-  }, 1000);
+  });
 };
 
 const createTask = (taskTitle) => {
@@ -131,21 +113,17 @@ const renderTasks = (tasksToRender = tasks) => {
     containerBuilder(task, completeTask, editTask, deleteTask, updateTask);
   });
 
-  if (tasksToRender.length === 0) {
-    $noTask.style.display = "flex";
-  } else {
-    $noTask.style.display = "none";
-  }
+  $noTask.style.display = tasksToRender.length === 0 ? "flex" : "none";
 };
 
 const renderNoTasks = () => {
   $taskListContainer.style.display = "none";
 };
 
-document.addEventListener("DOMContentLoaded", function () {
-  setTimeout(function () {
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
     $splash.style.display = "none";
-    isVisible = false;
+    isTaskInputVisible = false;
     $mainContainer.hidden = false;
     if (tasks.length === 0) {
       renderNoTasks();
@@ -153,6 +131,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }, 1000);
 });
 
-$noTask.addEventListener("click", handleTaskView);
-$createButton.addEventListener("click", handleTaskView);
+$noTask.addEventListener("click", toggleTaskInput);
+$createButton.addEventListener("click", toggleTaskInput);
 $searchButton.addEventListener("click", handleSearchTasks);

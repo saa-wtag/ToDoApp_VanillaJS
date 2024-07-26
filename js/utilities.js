@@ -204,7 +204,7 @@ export const formatDate = (createdAt) => {
   return `${day}.${month}.${year}`;
 };
 
-export const showSpinnerOverlay = (targetContainer) => {
+const showSpinnerOverlay = (targetContainer) => {
   const overlay = document.createElement("div");
   overlay.classList.add("overlay");
 
@@ -220,10 +220,18 @@ export const showSpinnerOverlay = (targetContainer) => {
   return overlay;
 };
 
-export const hideSpinnerOverlay = (overlay) => {
+const hideSpinnerOverlay = (overlay) => {
   if (overlay && overlay.parentNode) {
     overlay.parentNode.removeChild(overlay);
   }
 };
 
 export const timeoutSpinner = () => {};
+
+export const handleSpinner = (container, callback) => {
+  const overlay = showSpinnerOverlay(container);
+  setTimeout(() => {
+    callback();
+    hideSpinnerOverlay(overlay);
+  }, 1000);
+};
