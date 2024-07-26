@@ -55,7 +55,7 @@ const toggleTaskInput = () => {
 const handleSearchTasks = () => {
   const searchTitle = sanitizeInput($searchInput.value.trim()).toLowerCase();
   handleSpinner($taskListContainer, () => {
-    filterTasks(searchTitle); // Directly use searchTitle for filtering
+    filterTasks(searchTitle); 
     if (filteredOrSearchableTasks.length === 0) {
       showToastMessage("No tasks found matching the search.");
     }
@@ -66,7 +66,7 @@ const handleSearchTasks = () => {
 const deleteTask = (taskId, container) => {
   handleSpinner(container, () => {
     tasks = tasks.filter((task) => task.id !== taskId);
-    filterTasks(); // Reapply current filter after deletion
+    filterTasks(); 
   });
 };
 
@@ -82,7 +82,7 @@ const updateTask = (task, container, newTitle) => {
     handleSpinner(container, () => {
       task.title = newTitle;
       task.isEditing = false;
-      filterTasks(); // Reapply current filter after updating
+      filterTasks(); 
     });
   }
 };
@@ -93,7 +93,7 @@ const completeTask = (taskId, container) => {
     if (task) {
       task.done = true;
       task.isEditing = false;
-      filterTasks(); // Reapply current filter after marking as complete
+      filterTasks(); 
     }
   });
 };
@@ -107,8 +107,8 @@ const createTask = (taskTitle) => {
     done: false,
   };
   tasks.unshift(task);
-  filteredOrSearchableTasks = tasks; // Update filtered tasks after creation
-  filterTasks(); // Apply current filter
+  filteredOrSearchableTasks = tasks; 
+  filterTasks(); 
 };
 
 const filterTasks = (searchTitle = "") => {
