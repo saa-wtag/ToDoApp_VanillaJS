@@ -28,7 +28,7 @@ let currentFilter = "all";
 let filteredOrSearchableTasks = [];
 let tasksDisplayed = TASK_PER_PAGE;
 
-const filteredSearchableTasksOrTasks = filteredOrSearchableTasks.length
+const finalTaskList = filteredOrSearchableTasks.length
   ? filteredOrSearchableTasks
   : tasks;
 
@@ -52,7 +52,7 @@ const toggleTaskInput = () => {
   $noTask.style.display = "none";
 
   toggleInputContainer(isTaskInputVisible, handleAddTask);
-  if (!isTaskInputVisible) renderTasks(filteredSearchableTasksOrTasks);
+  if (!isTaskInputVisible) renderTasks(finalTaskList);
 };
 
 const handleSearchTasks = () => {
@@ -75,7 +75,7 @@ const deleteTask = (taskId, container) => {
 
 const editTask = (task) => {
   task.isEditing = true;
-  renderTasks(filteredSearchableTasksOrTasks);
+  renderTasks(finalTaskList);
 };
 
 const updateTask = (task, container, newTitle) => {
@@ -145,11 +145,19 @@ const renderTasks = (tasksToRender = filteredOrSearchableTasks) => {
 };
 
 $loadMore.addEventListener("click", () => {
+  if (!Array.isArray(tasks) || !Array.isArray(finalTaskList)) {
+    console.error("Task arrays are not defined correctly.");
+    return;
+  }
   tasksDisplayed = Math.min(
     tasksDisplayed + TASK_PER_PAGE,
-    filteredOrSearchableTasks.length || tasks.length
+    finalTaskList.length || tasks.length
   );
-  renderTasks(filteredSearchableTasksOrTasks);
+  if (typeof renderTasks !== "function") {
+    console.error("renderTasks is not a function");
+    return;
+  }
+  renderTasks(finalTaskList);
 });
 
 const renderNoTasks = () => {
