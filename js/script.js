@@ -145,13 +145,13 @@ const renderTasks = (tasksToRender = filteredOrSearchableTasks) => {
 };
 
 $loadMore.addEventListener("click", () => {
-  if (!Array.isArray(tasks) || !Array.isArray(finalTaskList)) {
+  if (!Array.isArray(tasks) || !Array.isArray(filteredOrSearchableTasks)) {
     console.error("Task arrays are not defined correctly.");
     return;
   }
   tasksDisplayed = Math.min(
     tasksDisplayed + TASK_PER_PAGE,
-    finalTaskList.length || tasks.length
+    filteredOrSearchableTasks.length || tasks.length
   );
   if (typeof renderTasks !== "function") {
     console.error("renderTasks is not a function");
