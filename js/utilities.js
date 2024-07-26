@@ -226,8 +226,6 @@ const hideSpinnerOverlay = (overlay) => {
   }
 };
 
-export const timeoutSpinner = () => {};
-
 export const handleSpinner = (container, callback) => {
   const overlay = showSpinnerOverlay(container);
   setTimeout(() => {
