@@ -1,5 +1,9 @@
 import { $toaster } from "./elements.js";
 
+export const successMessage = "Task added successfully!";
+export const invalidMessage = "Please provide a valid title!";
+export const noTaskMessage = "No tasks found matching the search.";
+
 export const showToastMessage = (message) => {
   $toaster.textContent = message;
   $toaster.hidden = false;
