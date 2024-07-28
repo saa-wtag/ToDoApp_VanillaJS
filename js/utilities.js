@@ -1,13 +1,21 @@
-import { $toaster } from "./elements.js";
+import { $toaster, $toastBox, $taskListContainer } from "./elements.js";
+import {
+  COLORS,
+  ICONS,
+  TASK_BUTTON_CLASSES,
+  TASK_CONTAINER_CLASSES,
+  FILTER_BUTTON_CLASSES,
+  CARD_BUTTON_CLASSES,
+  TASK_TITLE_CLASSES,
+} from "./const.js";
 
-export const successMessage = "Task added successfully!";
-export const invalidMessage = "Please provide a valid title!";
-export const noTaskMessage = "No tasks found matching the search.";
-
-export const showToastMessage = (message) => {
+export const showToastMessage = (message, isSuccess) => {
+  if (isSuccess) $toastBox.style.backgroundColor = COLORS.SUCCESS; // green
+  else $toastBox.style.backgroundColor = COLORS.ERROR; // red
   $toaster.textContent = message;
   $toaster.hidden = false;
   setTimeout(() => {
+    $toastBox.style.backgroundColor = COLORS.DEFAULT;
     $toaster.hidden = true;
   }, 3000);
 };
@@ -17,67 +25,211 @@ export const sanitizeInput = (value) => {
   return value.replace(reg, "").trim();
 };
 
-export const createElement = (text, type, onClick) => {
-  const $element = document.createElement(type);
-  $element.innerText = text;
-  if (onClick) {
-    $element.addEventListener("click", onClick);
-  }
-  return $element;
+const createElement = (type, classes = []) => {
+  const element = document.createElement(type);
+  if (classes.length > 0) element.classList.add(...classes);
+  return element;
 };
 
-export const createTaskElement = (
-  task,
-  deleteTask,
-  editTask,
-  updateTask,
-  cancelEdit,
-  completeTask
-) => {
-  const $taskItem = document.createElement("li");
-
-  const $titleElement = document.createElement("span");
-  $titleElement.textContent = task.title;
-  if (task && task.done) {
-    $titleElement.style.textDecoration = "line-through";
-  }
-
-  if (task.isEditing) {
-    const $inputField = document.createElement("input");
-    $inputField.type = "text";
-    $inputField.value = task.title;
-
-    const $updateButton = createElement("Update", "button", () => {
-      const sanitizedTitle = sanitizeInput($inputField.value);
-      updateTask(task, sanitizedTitle);
-    });
-    const $cancelButton = createElement("Cancel", "button", () => {
-      cancelEdit(task);
-    });
-
-    $taskItem.append($inputField, $updateButton, $cancelButton);
+export const toggleInputContainer = (isVisible, handleAddTask) => {
+  if (isVisible) {
+    $taskListContainer.style.display = "grid";
+    const inputContainer = createTaskElement(handleAddTask);
+    $taskListContainer.appendChild(inputContainer);
   } else {
-    const $deleteButton = createElement("Delete", "button", () =>
-      deleteTask(task.id)
-    );
-    const $editButton = createElement("Edit", "button", () => editTask(task));
-    const $doneButton = createElement("Done", "button", () =>
-      completeTask(task.id)
-    );
-
-    $taskItem.append($titleElement, $deleteButton);
-    if (!task.done) {
-      $taskItem.append($editButton, $doneButton);
-    }
+    const inputContainer = document.getElementById("inputContainer");
+    if (inputContainer) inputContainer.remove();
   }
-
-  return $taskItem;
 };
 
-export const formatDate = (timestamp) => {
-  const date = new Date(timestamp);
+const createButton = (id, imgSrc, alt, handler) => {
+  const button = document.createElement("button");
+  button.classList.add(...CARD_BUTTON_CLASSES);
+  button.classList.add(id);
+  // Convert class name from kebab-case to camelCase
+  const camelCaseClassName = id.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+  button.id = camelCaseClassName;
+  if (imgSrc) {
+    const img = document.createElement("img");
+    img.src = imgSrc;
+    img.alt = alt;
+    button.appendChild(img);
+  } else {
+    button.textContent = alt;
+  }
+  if (id === "save-button") {
+    button.style.border = "1px solid #e9e9ed";
+  }
+  button.addEventListener("click", handler);
+  return button;
+};
+
+export const createTaskElement = (handleAddTask) => {
+  const taskContainer = document.createElement("div");
+  taskContainer.classList.add(...TASK_CONTAINER_CLASSES);
+  taskContainer.id = "inputContainer";
+  taskContainer.classList.add("input-container");
+
+  const taskInputDiv = document.createElement("div");
+  const taskInput = document.createElement("textarea");
+  taskInput.classList.add("task-input");
+  taskInput.id = "taskInput";
+  taskInputDiv.appendChild(taskInput);
+
+  const taskButtonsDiv = document.createElement("div");
+  taskButtonsDiv.classList.add(...TASK_BUTTON_CLASSES);
+
+  const addButton = document.createElement("button");
+  addButton.classList.add(...FILTER_BUTTON_CLASSES);
+  addButton.classList.add("add-button");
+  addButton.id = "addButton";
+  addButton.textContent = "Add Task";
+  addButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    handleAddTask(taskContainer);
+  });
+
+  const deleteButton = createButton(
+    "delete-button",
+    ICONS.DELETE,
+    "Delete",
+    () => taskContainer.remove()
+  );
+
+  taskButtonsDiv.append(addButton, deleteButton);
+  taskContainer.append(taskInputDiv, taskButtonsDiv);
+
+  return taskContainer;
+};
+
+export const containerBuilder = (
+  task,
+  completeTask,
+  editTask,
+  deleteTask,
+  updateTask
+) => {
+  const taskContainer = createElement("div", TASK_CONTAINER_CLASSES);
+  taskContainer.id = task.done ? "done-task-unit" : "remaining-task-unit";
+
+  const taskInfo = createElement("div");
+  const taskButtons = createElement("div", TASK_BUTTON_CLASSES);
+
+  const content = task.isEditing
+    ? buildEditModeContent(task)
+    : buildNormalModeContent(task);
+
+  taskContainer.append(taskInfo, taskButtons);
+  taskInfo.append(...content);
+
+  if (task && task.done) {
+    task.isEditing = false;
+    const doneAt = createElement("p");
+    doneAt.textContent = `Completed in ${calculateCompletionTime(task)} days`;
+    doneAt.classList.add("task-done-at");
+    doneAt.id = "taskDoneAt";
+    taskButtons.classList.add("done-task-buttons");
+    taskButtons.prepend(doneAt);
+
+    taskButtons.prepend(
+      createButton("delete-button", ICONS.DELETE, "Delete", () =>
+        deleteTask(task.id, taskContainer)
+      )
+    );
+  } else {
+    if (!task.isEditing) {
+      taskButtons.append(
+        createButton("edit-button", ICONS.EDIT, "Edit", () => editTask(task))
+      );
+    } else {
+      taskButtons.append(
+        createButton("save-button", null, "Save", () =>
+          updateTask(task, taskContainer, content[0].value.trim())
+        )
+      );
+    }
+
+    taskButtons.append(
+      createButton("done-button", ICONS.DONE, "Done", () =>
+        completeTask(task.id, taskContainer)
+      )
+    );
+
+    taskButtons.append(
+      createButton("delete-button", ICONS.DELETE, "Delete", () =>
+        deleteTask(task.id, taskContainer)
+      )
+    );
+  }
+
+  $taskListContainer.appendChild(taskContainer);
+};
+
+const buildEditModeContent = (task) => {
+  const taskInput = createElement("textarea");
+  taskInput.classList.add("task-input");
+  taskInput.id = "taskInput";
+  taskInput.value = task.title;
+  return [taskInput];
+};
+
+const buildNormalModeContent = (task) => {
+  const taskTitle = createElement("p", TASK_TITLE_CLASSES);
+  taskTitle.textContent = task.title;
+  if (task.done) {
+    taskTitle.id = "doneTitle";
+    taskTitle.classList.add("done-title");
+  }
+
+  const createdAt = createElement("p");
+  createdAt.classList.add("task-created-at");
+  createdAt.id = "taskCreatedAt";
+  createdAt.textContent = `Created At: ${formatDate(task.id)}`;
+  return [taskTitle, createdAt];
+};
+
+const calculateCompletionTime = (task) => {
+  const createdDate = new Date(task.id);
+  const completedDate = new Date(task.completedAt || new Date());
+  const timeDiff = Math.abs(completedDate - createdDate);
+  const diffDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+  return diffDays;
+};
+
+export const formatDate = (createdAt) => {
+  const date = new Date(createdAt);
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = String(date.getFullYear()).slice(-2);
   return `${day}.${month}.${year}`;
+};
+
+const showSpinnerOverlay = (targetContainer) => {
+  const overlay = document.createElement("div");
+  overlay.classList.add("overlay");
+
+  const spinnerImage = document.createElement("img");
+  spinnerImage.src = ICONS.SPINNER;
+  spinnerImage.alt = "Loading...";
+  spinnerImage.classList.add("spinner");
+
+  overlay.appendChild(spinnerImage);
+  targetContainer.style.position = "relative";
+  targetContainer.appendChild(overlay);
+
+  return overlay;
+};
+
+const hideSpinnerOverlay = (overlay) => {
+  if (overlay && overlay.parentNode) {
+    overlay.parentNode.removeChild(overlay);
+  }
+};
+
+export const handleSpinner = (container, callback) => {
+  const overlay = showSpinnerOverlay(container);
+  setTimeout(() => {
+    callback();
+    hideSpinnerOverlay(overlay);
+  }, 1000);
 };

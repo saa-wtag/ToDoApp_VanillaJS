@@ -4,26 +4,60 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ToDoApp</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <header>
-      <h1>ToDoApp</h1>
-    </header>
-    <div>
-      <input type="text" id="search-input" placeholder="Search tasks" />
-      <button id="search-button">Search</button>
+    <div class="splash" id="splashScreen">
+      <img src="./icons/logo.svg" />
     </div>
-    <div>
-      <input type="text" id="task-input" placeholder="Write your task" />
-      <button id="add-button" disabled>Add Task</button>
+    <div class="main-container" id="container" hidden>
+      <header>
+        <div class="header-container">
+          <div class="top-icon">
+            <img src="./icons/logo.svg" alt="Todos" />
+          </div>
+          <div class="search-icon">
+            <input type="text" class="search-input" id="searchInput" />
+            <button class="button" id="searchButton">
+              <img src="./icons/search-icon.svg" alt="search" />
+            </button>
+          </div>
+        </div>
+      </header>
+      <div class="body-container" id="bodyContainer">
+        <div class="toast-container" id="toastContainer">
+          <p id="message"></p>
+        </div>
+        <div id="top-title">
+          <h2>Add Tasks</h2>
+        </div>
+        <div class="top-buttons-container">
+          <div class="left-buttons">
+            <button class="create-button" id="createButton">
+              <img src="./icons/plus-icon.svg" alt="plus" />
+              Create
+            </button>
+          </div>
+          <div class="right-buttons">
+            <button class="filters-button" id="filter-all">All</button>
+            <button class="filters-button" id="filter-incomplete">
+              Incomplete
+            </button>
+            <button class="filters-button" id="filter-complete">
+              Complete
+            </button>
+          </div>
+        </div>
+        <div class="centered-image" id="centeredImage">
+          <img src="./icons/no-task-icon.svg" alt="Add Task" />
+        </div>
+        <div class="tasks-container" id="tasksContainer"></div>
+      </div>
     </div>
-    <div>
-      <h5 id="message" hidden></h5>
-    </div>
-    <div class="tasks-container">
-      <ul id="tasks"></ul>
-    </div>
-
     <script type="module" src="./js/script.js"></script>
   </body>
 </html>

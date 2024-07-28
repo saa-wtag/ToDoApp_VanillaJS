@@ -1,0 +1,32 @@
+:root {
+  --font-family: "Roboto", sans-serif;
+
+  --primary-color: #7a8dfd;
+  --secondary-color: #32394b;
+  --text-color: #000000;
+  --toast-text-color: #ffffff;
+  --light-text-color: #a4a1a1;
+  --success-color: #0bc375;
+  --background-color: #ffffff;
+  --border-color: #dde2ff;
+  --light-gray: #e9e9ed;
+  --white:#ffffff;
+  --inactive-button-color: #ffffff;
+
+  --font-size-large: xx-large;
+  --font-size-medium: 16px;
+  --font-weight-regular: 300;
+  --font-weight-bold: 500;
+
+  --border-radius: 0.4rem;
+  --border-width: 1.5px;
+  --grid-gap: 1rem;
+
+  --toast-height: 3rem;
+  --toast-width: 25rem;
+  --task-height: 9rem;
+  --task-width: 90%;
+  --search-input-height: 0.65rem;
+  --search-input-width: 30rem;
+  --task-input-height: 6rem;
+}

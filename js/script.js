@@ -1,58 +1,72 @@
 import {
-  $taskInput,
-  $addButton,
-  $taskList,
+  $mainContainer,
   $searchInput,
   $searchButton,
+  $splash,
+  $noTask,
+  $taskListContainer,
+  $createButton,
 } from "./elements.js";
 import {
   showToastMessage,
-  createTaskElement,
   sanitizeInput,
+  toggleInputContainer,
+  containerBuilder,
   formatDate,
-  successMessage,
-  invalidMessage,
-  noTaskMessage,
+  handleSpinner,
 } from "./utilities.js";
+import { MESSAGES } from "./const.js";
 
 let tasks = [];
+let isTaskInputVisible = false;
 
-const addButtonHandler = () => {
-  const taskTitle = sanitizeInput($taskInput.value);
+const handleAddTask = (container) => {
+  isTaskInputVisible = !isTaskInputVisible;
+  const taskTitle = sanitizeInput(document.getElementById("taskInput").value);
+
   if (taskTitle) {
-    createTask(taskTitle);
-    showToastMessage(successMessage);
-    $addButton.disabled = true;
+    handleSpinner(container, () => {
+      createTask(taskTitle);
+      showToastMessage(MESSAGES.SUCCESS, true);
+    });
   } else {
-    showToastMessage(invalidMessage);
+    showToastMessage(MESSAGES.ERROR, false);
   }
+};
+
+const toggleTaskInput = () => {
+  isTaskInputVisible = !isTaskInputVisible;
+  $taskListContainer.style.display = "grid";
+  $noTask.style.display = "none";
+
+  toggleInputContainer(isTaskInputVisible, handleAddTask);
+  if (!isTaskInputVisible) renderTasks(tasks);
 };
 
 const handleSearchTasks = () => {
-  // Sanitize and retrieve the input value
   const searchTitle = sanitizeInput($searchInput.value.trim());
-  // Clear the input field
-  $searchInput.value = "";
-  // Use early return to handle empty search scenario
-  if (!searchTitle) {
-    renderTasks(tasks);
-    return;
-  }
-  // Filter tasks based on the sanitized input
-  const filteredTasks = tasks.filter((task) =>
-    task.title.toLowerCase().includes(searchTitle.toLowerCase())
-  );
-  // Render based on the filtering result
-  if (filteredTasks.length > 0) {
-    renderTasks(filteredTasks);
-  } else {
-    showToastMessage("No tasks found matching the search.");
-  }
+  handleSpinner($taskListContainer, () => {
+    if (!searchTitle) {
+      renderTasks(tasks);
+      return;
+    }
+    const filteredTasks = tasks.filter((task) =>
+      task.title.toLowerCase().includes(searchTitle.toLowerCase())
+    );
+    if (filteredTasks.length > 0) {
+      renderTasks(filteredTasks);
+    } else {
+      showToastMessage("No tasks found matching the search.");
+    }
+    $searchInput.value = "";
+  });
 };
 
-const deleteTask = (taskId) => {
-  tasks = tasks.filter((task) => task.id !== taskId);
-  renderTasks(tasks);
+const deleteTask = (taskId, container) => {
+  handleSpinner(container, () => {
+    tasks = tasks.filter((task) => task.id !== taskId);
+    renderTasks(tasks);
+  });
 };
 
 const editTask = (task) => {
@@ -60,25 +74,25 @@ const editTask = (task) => {
   renderTasks(tasks);
 };
 
-const updateTask = (task, newTitle) => {
+const updateTask = (task, container, newTitle) => {
   if (newTitle) {
-    task.title = newTitle;
-    task.isEditing = false;
+    handleSpinner(container, () => {
+      task.title = newTitle;
+      task.isEditing = false;
+      renderTasks(tasks);
+    });
   }
-  renderTasks(tasks);
 };
 
-const completeTask = (taskId) => {
-  const task = tasks.find((task) => task.id === taskId);
-
-  if (task === undefined) {
-    return;
-  }
-
-  task.done = true;
-  task.isEditing = false;
-
-  renderTasks(tasks);
+const completeTask = (taskId, container) => {
+  handleSpinner(container, () => {
+    const task = tasks.find((task) => task.id === taskId);
+    if (task) {
+      task.done = true;
+      task.isEditing = false;
+      renderTasks(tasks);
+    }
+  });
 };
 
 const createTask = (taskTitle) => {
@@ -86,42 +100,37 @@ const createTask = (taskTitle) => {
     id: new Date().getTime(),
     title: taskTitle,
     createdAt: formatDate(new Date()),
+    isEditing: false,
+    done: false,
   };
   tasks.unshift(task);
   renderTasks(tasks);
-  $taskInput.value = "";
 };
 
-const renderTasks = (tasks = []) => {
-  $taskList.innerHTML = "";
-
-  tasks.forEach((task) => {
-    const $taskElement = createTaskElement(
-      task,
-      deleteTask,
-      editTask,
-      updateTask,
-      cancelEdit,
-      completeTask
-    );
-    $taskList.appendChild($taskElement);
+const renderTasks = (tasksToRender = tasks) => {
+  $taskListContainer.innerHTML = "";
+  tasksToRender.forEach((task) => {
+    containerBuilder(task, completeTask, editTask, deleteTask, updateTask);
   });
+
+  $noTask.style.display = tasksToRender.length === 0 ? "flex" : "none";
 };
 
-const cancelEdit = (curTask) => {
-  tasks.forEach((task) => {
-    if (task.id === curTask.id) task.isEditing = false;
-  });
-  renderTasks(tasks);
+const renderNoTasks = () => {
+  $taskListContainer.style.display = "none";
 };
 
-$taskInput.addEventListener("input", () => {
-  if ($taskInput.value.trim()) {
-    $addButton.disabled = false;
-  } else {
-    $addButton.disabled = true;
-  }
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    $splash.style.display = "none";
+    isTaskInputVisible = false;
+    $mainContainer.hidden = false;
+    if (tasks.length === 0) {
+      renderNoTasks();
+    }
+  }, 1000);
 });
 
-$addButton.addEventListener("click", addButtonHandler);
+$noTask.addEventListener("click", toggleTaskInput);
+$createButton.addEventListener("click", toggleTaskInput);
 $searchButton.addEventListener("click", handleSearchTasks);
