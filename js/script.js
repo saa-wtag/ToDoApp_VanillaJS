@@ -9,6 +9,7 @@ import {
   $filterAllButton,
   $filterIncompleteButton,
   $filterCompleteButton,
+  $loadMore,
 } from "./elements.js";
 import {
   showToastMessage,
@@ -19,12 +20,13 @@ import {
   setActiveButton,
   handleSpinner,
 } from "./utilities.js";
-import { MESSAGES } from "./const.js";
+import { MESSAGES, TASK_PER_PAGE } from "./const.js";
 
 let tasks = [];
 let isTaskInputVisible = false;
 let currentFilter = "all";
 let filteredOrSearchableTasks = [];
+let tasksDisplayed = TASK_PER_PAGE;
 
 const finalTaskList = filteredOrSearchableTasks.length
   ? filteredOrSearchableTasks
@@ -107,6 +109,7 @@ const createTask = (taskTitle) => {
   };
   tasks.unshift(task);
   filteredOrSearchableTasks = tasks;
+  tasksDisplayed = TASK_PER_PAGE;
   filterTasks();
 };
 
@@ -124,18 +127,38 @@ const filterTasks = (searchTitle = "") => {
   }
 
   filteredOrSearchableTasks = filteredTasks;
+  tasksDisplayed = Math.min(tasksDisplayed, filteredTasks.length);
   renderTasks(filteredTasks);
 };
 
 const renderTasks = (tasksToRender = filteredOrSearchableTasks) => {
   $taskListContainer.innerHTML = "";
 
-  tasksToRender.forEach((task) => {
+  const paginatedTasks = tasksToRender.slice(0, tasksDisplayed);
+  paginatedTasks.forEach((task) => {
     containerBuilder(task, completeTask, editTask, deleteTask, updateTask);
   });
 
   $noTask.style.display = tasksToRender.length === 0 ? "flex" : "none";
+  $loadMore.style.display =
+    tasksToRender.length > tasksDisplayed ? "block" : "none";
 };
+
+$loadMore.addEventListener("click", () => {
+  if (!Array.isArray(tasks) || !Array.isArray(filteredOrSearchableTasks)) {
+    console.error("Task arrays are not defined correctly.");
+    return;
+  }
+  tasksDisplayed = Math.min(
+    tasksDisplayed + TASK_PER_PAGE,
+    filteredOrSearchableTasks.length || tasks.length
+  );
+  if (typeof renderTasks !== "function") {
+    console.error("renderTasks is not a function");
+    return;
+  }
+  renderTasks(finalTaskList);
+});
 
 const renderNoTasks = () => {
   $taskListContainer.style.display = "none";
