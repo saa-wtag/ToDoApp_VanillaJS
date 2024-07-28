@@ -12,3 +12,7 @@ export const $noTask = document.getElementById("centeredImage");
 export const $taskListContainer = document.getElementById("tasksContainer");
 export const $createButton = document.getElementById("createButton");
 export const $taskAddBox = document.getElementById("inputContainer");
+export const $filterAllButton = document.getElementById("filterAll");
+export const $filterIncompleteButton =
+  document.getElementById("filterIncomplete");
+export const $filterCompleteButton = document.getElementById("filterComplete");

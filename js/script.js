@@ -6,6 +6,9 @@ import {
   $noTask,
   $taskListContainer,
   $createButton,
+  $filterAllButton,
+  $filterIncompleteButton,
+  $filterCompleteButton,
 } from "./elements.js";
 import {
   showToastMessage,
@@ -13,12 +16,19 @@ import {
   toggleInputContainer,
   containerBuilder,
   formatDate,
+  setActiveButton,
   handleSpinner,
 } from "./utilities.js";
 import { MESSAGES } from "./const.js";
 
 let tasks = [];
 let isTaskInputVisible = false;
+let currentFilter = "all";
+let filteredOrSearchableTasks = [];
+
+const finalTaskList = filteredOrSearchableTasks.length
+  ? filteredOrSearchableTasks
+  : tasks;
 
 const handleAddTask = (container) => {
   isTaskInputVisible = !isTaskInputVisible;
@@ -40,22 +50,14 @@ const toggleTaskInput = () => {
   $noTask.style.display = "none";
 
   toggleInputContainer(isTaskInputVisible, handleAddTask);
-  if (!isTaskInputVisible) renderTasks(tasks);
+  if (!isTaskInputVisible) renderTasks(finalTaskList);
 };
 
 const handleSearchTasks = () => {
-  const searchTitle = sanitizeInput($searchInput.value.trim());
+  const searchTitle = sanitizeInput($searchInput.value.trim()).toLowerCase();
   handleSpinner($taskListContainer, () => {
-    if (!searchTitle) {
-      renderTasks(tasks);
-      return;
-    }
-    const filteredTasks = tasks.filter((task) =>
-      task.title.toLowerCase().includes(searchTitle.toLowerCase())
-    );
-    if (filteredTasks.length > 0) {
-      renderTasks(filteredTasks);
-    } else {
+    filterTasks(searchTitle);
+    if (filteredOrSearchableTasks.length === 0) {
       showToastMessage("No tasks found matching the search.");
     }
     $searchInput.value = "";
@@ -65,13 +67,13 @@ const handleSearchTasks = () => {
 const deleteTask = (taskId, container) => {
   handleSpinner(container, () => {
     tasks = tasks.filter((task) => task.id !== taskId);
-    renderTasks(tasks);
+    filterTasks();
   });
 };
 
 const editTask = (task) => {
   task.isEditing = true;
-  renderTasks(tasks);
+  renderTasks(finalTaskList);
 };
 
 const updateTask = (task, container, newTitle) => {
@@ -79,7 +81,7 @@ const updateTask = (task, container, newTitle) => {
     handleSpinner(container, () => {
       task.title = newTitle;
       task.isEditing = false;
-      renderTasks(tasks);
+      filterTasks();
     });
   }
 };
@@ -90,7 +92,7 @@ const completeTask = (taskId, container) => {
     if (task) {
       task.done = true;
       task.isEditing = false;
-      renderTasks(tasks);
+      filterTasks();
     }
   });
 };
@@ -104,11 +106,30 @@ const createTask = (taskTitle) => {
     done: false,
   };
   tasks.unshift(task);
-  renderTasks(tasks);
+  filteredOrSearchableTasks = tasks;
+  filterTasks();
 };
 
-const renderTasks = (tasksToRender = tasks) => {
+const filterTasks = (searchTitle = "") => {
+  let filteredTasks = tasks.filter((task) => {
+    if (currentFilter === "incomplete") return !task.done;
+    if (currentFilter === "complete") return task.done;
+    return true;
+  });
+
+  if (searchTitle) {
+    filteredTasks = filteredTasks.filter((task) =>
+      task.title.toLowerCase().includes(searchTitle)
+    );
+  }
+
+  filteredOrSearchableTasks = filteredTasks;
+  renderTasks(filteredTasks);
+};
+
+const renderTasks = (tasksToRender = filteredOrSearchableTasks) => {
   $taskListContainer.innerHTML = "";
+
   tasksToRender.forEach((task) => {
     containerBuilder(task, completeTask, editTask, deleteTask, updateTask);
   });
@@ -134,3 +155,21 @@ document.addEventListener("DOMContentLoaded", () => {
 $noTask.addEventListener("click", toggleTaskInput);
 $createButton.addEventListener("click", toggleTaskInput);
 $searchButton.addEventListener("click", handleSearchTasks);
+
+$filterAllButton.addEventListener("click", (event) => {
+  currentFilter = "all";
+  filterTasks();
+  setActiveButton(event.target);
+});
+
+$filterIncompleteButton.addEventListener("click", (event) => {
+  currentFilter = "incomplete";
+  filterTasks();
+  setActiveButton(event.target);
+});
+
+$filterCompleteButton.addEventListener("click", (event) => {
+  currentFilter = "complete";
+  filterTasks();
+  setActiveButton(event.target);
+});
